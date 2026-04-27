@@ -1,0 +1,241 @@
+/* ============================================
+   Ávila Cortinas e Persianas — Custom Styles
+   ============================================ */
+
+/* --- Base & Reset --- */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+/* Alpine.js x-cloak */
+[x-cloak] {
+  display: none !important;
+}
+
+/* --- Animations --- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scrollDot {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 0.3;
+  }
+}
+
+@keyframes bounceSlow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.animation-delay-100 {
+  animation-delay: 0.1s;
+}
+
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animation-delay-300 {
+  animation-delay: 0.3s;
+}
+
+.animate-scroll-dot {
+  animation: scrollDot 2s ease-in-out infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounceSlow 3s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* --- Typography enhancements --- */
+.font-baskerville {
+  font-family: 'Baskerville', 'Georgia', 'Times New Roman', serif;
+  font-style: normal;
+}
+
+/* --- Scrollbar styling --- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F8F8FC;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2F3192;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1A1B34;
+}
+
+/* --- Selection styling --- */
+::selection {
+  background: #EC1C24;
+  color: #FFFFFF;
+}
+
+/* --- Link underline effects --- */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #EC1C24;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* --- Card hover effects --- */
+.service-card {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+}
+
+/* --- FAQ smooth transitions --- */
+.faq-content {
+  overflow: hidden;
+  transition: max-height 0.4s ease-out, opacity 0.3s ease;
+}
+
+/* --- Image hover zoom --- */
+.img-zoom {
+  overflow: hidden;
+}
+
+.img-zoom img {
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.img-zoom:hover img {
+  transform: scale(1.08);
+}
+
+/* --- Gradient text --- */
+.gradient-text {
+  background: linear-gradient(135deg, #2F3192 0%, #EC1C24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* --- Button pulse animation for WhatsApp --- */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+#whatsapp-float::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: #22c55e;
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  z-index: -1;
+}
+
+/* --- Smooth reveal on scroll (optional JS enhancement) --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- Responsive adjustments --- */
+@media (max-width: 640px) {
+  .animate-fade-in-up {
+    animation-duration: 0.6s;
+  }
+  
+  #whatsapp-float {
+    width: 56px;
+    height: 56px;
+    bottom: 16px;
+    right: 16px;
+  }
+  
+  #whatsapp-float svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* --- Print styles --- */
+@media print {
+  #whatsapp-float,
+  #header,
+  .animate-bounce-slow {
+    display: none !important;
+  }
+  
+  body {
+    color: #000 !important;
+  }
+  
+  section {
+    page-break-inside: avoid;
+  }
+}

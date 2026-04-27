@@ -1,0 +1,79 @@
+# ============================================================
+# Ávila Cortinas e Persianas — .htaccess
+# ============================================================
+
+Options -Indexes
+
+# ------------------------------------------------------------
+# 1) FORÇAR HTTPS (301)
+# ------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Redireciona HTTP → HTTPS
+    RewriteCond %{HTTPS} off
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+# ------------------------------------------------------------
+# 2) PADRONIZAR DOMÍNIO: www → não-www (301)
+# ------------------------------------------------------------
+
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# ------------------------------------------------------------
+# 3) PÁGINA 404 PERSONALIZADA
+#    (retorna à home — site one page)
+# ------------------------------------------------------------
+ErrorDocument 404 /index.html
+
+# ------------------------------------------------------------
+# 4) COMPRESSÃO GZIP (mod_deflate)
+# ------------------------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE application/xml
+</IfModule>
+
+# ------------------------------------------------------------
+# 5) CACHE DE NAVEGADOR
+# ------------------------------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    # HTML — 1 hora
+    <FilesMatch "\.(html|htm)$">
+        ExpiresDefault "access plus 1 hour"
+        Header set Cache-Control "public, max-age=3600, must-revalidate"
+    </FilesMatch>
+
+    # Imagens e mídias — 1 mês
+    <FilesMatch "\.(jpg|jpeg|png|webp|gif|ico|svg|mp4|webm)$">
+        ExpiresDefault "access plus 1 month"
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+
+    # CSS e JS — 1 semana
+    <FilesMatch "\.(css|js)$">
+        ExpiresDefault "access plus 1 week"
+        Header set Cache-Control "public, max-age=604800"
+    </FilesMatch>
+
+    # Fontes — 1 mês
+    <FilesMatch "\.(woff|woff2|ttf|otf|eot)$">
+        ExpiresDefault "access plus 1 month"
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header unset ETag
+    FileETag None
+</IfModule>

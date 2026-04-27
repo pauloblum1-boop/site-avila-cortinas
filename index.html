@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cortinas e Persianas em Criciúma | Ávila</title>
+    <meta name="description" content="Cortinas e persianas sob medida em Criciúma. Projeto personalizado, materiais exclusivos e instalação profissional. Solicite seu orçamento.">
+    <meta name="keywords" content="cortinas em Criciúma, persianas sob medida, papel de parede elegante, piso vinílico Criciúma, decoração alto padrão, arquitetura de interiores, Ávila Cortinas">
+
+    <link rel="canonical" href="https://cortinasavila.shop/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cortinasavila.shop/">
+    <meta property="og:title" content="Cortinas e Persianas em Criciúma | Ávila">
+    <meta property="og:description" content="Cortinas e persianas sob medida em Criciúma. Projeto personalizado, materiais exclusivos e instalação profissional. Solicite seu orçamento.">
+    <meta property="og:image" content="https://cortinasavila.shop/assets/img/cortina-02.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:site_name" content="Ávila Cortinas e Persianas">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Cortinas e Persianas em Criciúma | Ávila">
+    <meta name="twitter:description" content="Cortinas e persianas sob medida em Criciúma. Projeto personalizado, materiais exclusivos e instalação profissional. Solicite seu orçamento.">
+    <meta name="twitter:image" content="https://cortinasavila.shop/assets/img/cortina-02.jpg">
+
+    <link rel="shortcut icon" href="assets/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/img/favicon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('heroVideoSlider', () => ({
+                videos: ['assets/video/hero-01.mp4', 'assets/video/hero-02.mp4', 'assets/video/hero-03.mp4'],
+                currentIndex: 0,
+                activeVid: 1,
+                init() {
+                    this.$refs.vid1.src = this.videos[0];
+                    this.$refs.vid1.play();
+                    
+                    this.$refs.vid1.addEventListener('ended', () => this.swapVideo(this.$refs.vid1, this.$refs.vid2));
+                    this.$refs.vid2.addEventListener('ended', () => this.swapVideo(this.$refs.vid2, this.$refs.vid1));
+                },
+                swapVideo(currentEl, nextEl) {
+                    this.currentIndex = (this.currentIndex + 1) % this.videos.length;
+                    nextEl.src = this.videos[this.currentIndex];
+                    nextEl.play();
+                    this.activeVid = this.activeVid === 1 ? 2 : 1;
+                }
+            }));
+        });
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        h1, h2, h3, h4, .font-serif { font-family: 'Cinzel', serif; }
+        .lux-transition { transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-auto-rows: 250px;
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) {
+            .gallery-grid .tall { grid-row: span 2; }
+            .gallery-grid .wide { grid-column: span 2; }
+        }
+
+        /* ── FAQ Accordion ── */
+        .faq-item {
+            border-bottom: 1px solid rgba(110, 92, 79, 0.12);
+            border-left: 3px solid transparent;
+            transition: border-left-color 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                        background-color 0.4s ease;
+        }
+        .faq-item.faq-active {
+            border-left-color: #E8D8A9;
+            background-color: rgba(232, 216, 169, 0.08);
+        }
+        .faq-body {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                        opacity 0.45s ease;
+        }
+        .faq-body.faq-open {
+            max-height: 500px;
+            opacity: 1;
+        }
+        .faq-icon {
+            transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                        color 0.3s ease;
+            flex-shrink: 0;
+        }
+        .faq-item.faq-active .faq-icon {
+            transform: rotate(45deg);
+        }
+        .faq-num {
+            transition: color 0.4s ease;
+        }
+        .faq-item.faq-active .faq-num {
+            color: #6E5C4F;
+        }
+        .faq-q {
+            transition: color 0.35s ease;
+        }
+        .faq-item:hover .faq-q {
+            color: #6E5C4F;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandSand: '#E8D8A9',    // Bege Dourado — Identidade Visual Ávila
+                        brandPeach: '#EDDCD2',   // Pêssego/Gelo (muito leve)
+                        brandIce: '#FCFCFC',     // Fundo principal Gelo/Branco
+                        deepCharcoal: '#1C1B1A', // Preto Quebrado para fontes (Luxo)
+                        warmWood: '#6E5C4F',     // Tom Madeira/Terra sutil
+                        brandBlue: '#2F3192',    // Azul Royal — cor principal da marca
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- ================================================
+         Schema.org JSON-LD — Estruturado para SEO
+    ================================================ -->
+
+    <!-- BLOCO 1: Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://cortinasavila.shop/#organization",
+      "name": "Ávila Cortinas e Persianas",
+      "url": "https://cortinasavila.shop/",
+      "logo": "https://cortinasavila.shop/assets/img/logo.png",
+      "sameAs": [
+        "https://www.instagram.com/cortinasavila/",
+        "https://www.facebook.com/avilacortinaspersianas"
+      ]
+    }
+    </script>
+
+    <!-- BLOCO 2: LocalBusiness -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HomeGoodsStore",
+      "@id": "https://cortinasavila.shop/#localbusiness",
+      "name": "Ávila Cortinas e Persianas",
+      "image": "https://cortinasavila.shop/assets/img/cortina-02.jpg",
+      "url": "https://cortinasavila.shop/",
+      "telephone": "+554834372422",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Rua Henrique Lage, 1215",
+        "addressLocality": "Criciúma",
+        "addressRegion": "SC",
+        "postalCode": "88804-010",
+        "addressCountry": "BR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -28.703418,
+        "longitude": -49.378902
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+          "opens": "08:30",
+          "closes": "12:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+          "opens": "13:30",
+          "closes": "18:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Saturday"],
+          "opens": "08:30",
+          "closes": "12:00"
+        }
+      ],
+      "priceRange": "$$",
+      "hasMap": "https://www.google.com/maps/place/R.+Henrique+Lage,+1215+-+Santa+B%C3%A1rbara,+Crici%C3%BAma+-+SC,+88804-010",
+      "areaServed": {
+        "@type": "GeoCircle",
+        "geoMidpoint": {
+          "@type": "GeoCoordinates",
+          "latitude": -28.703418,
+          "longitude": -49.378902
+        },
+        "geoRadius": "30000"
+      },
+      "parentOrganization": {
+        "@id": "https://cortinasavila.shop/#organization"
+      }
+    }
+    </script>
+
+    <!-- BLOCO 3: WebSite -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://cortinasavila.shop/#website",
+      "url": "https://cortinasavila.shop/",
+      "name": "Ávila Cortinas e Persianas"
+    }
+    </script>
+
+    <!-- BLOCO 4: FAQPage -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Cortinas sob medida realmente fazem diferença no ambiente?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim, e de forma significativa. Cortinas sob medida eliminam folgas, tecidos desnecessários e o aspecto improvisado das peças de prateleira. O resultado é um ambiente mais coeso, sofisticado e com acabamento de projeto de arquitetura de interiores. Além disso, permitem a escolha precisa de tecido, opacidade, mecanismo e ferragem — cada detalhe pensado especificamente para o seu espaço."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Qual a diferença entre persiana rolô e persiana romana?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A persiana rolô é enrolada internamente em um tubo, criando aparência minimalista e contemporânea — ideal para escritórios, quartos e ambientes de linha limpa. A persiana romana dobra em pregas horizontais ao ser aberta, transmitindo elegância e amplitude, sendo valorizada em salas de estar e quartos de alto padrão. A escolha depende do estilo do ambiente, da funcionalidade desejada e do volume de luz que se quer controlar."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Como escolher a melhor cortina para o quarto?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Para quartos, os principais fatores são o controle de luz e a privacidade. Tecidos blackout bloqueiam quase 100% da entrada de luz — perfeitos para quem tem sono leve ou trabalha em horários alternativos. Para quem prefere uma entrada suave de luz natural, os tecidos semi-blackout ou voil duplo são excelentes escolhas. Também levamos em conta a paleta de cores do quarto, a altura do pé-direito e o tamanho da janela para indicar o modelo ideal."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Qual é o prazo médio para fabricação e instalação dos produtos?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O prazo varia conforme o produto e a complexidade do projeto, mas em geral trabalha-se com um ciclo de 10 a 20 dias úteis entre a medição, fabricação e agendamento da instalação. Para projetos maiores ou personalizados, pode ser necessário um prazo maior. Nossa equipe informa o prazo estimado no momento do orçamento, garantindo transparência em todo o processo."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Piso vinílico é adequado para cozinhas e banheiros com alta umidade?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim. O piso vinílico é uma das soluções mais indicadas para ambientes úmidos justamente por sua impermeabilidade. Diferente do laminado de madeira, ele não sofre com empolamento ou deformação causados pela umidade. Além disso, é de fácil higienização, antiderrapante e oferece conforto térmico e acústico superiores ao piso frio convencional."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Papel de parede pode ser aplicado sobre parede com textura?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Depende do tipo e da intensidade da textura. Texturas muito acentuadas exigem preparação prévia da superfície para garantir aderência e um resultado final uniforme. Nossa equipe realiza uma avaliação do estado da parede antes da aplicação e, quando necessário, indica a preparação correta — que pode incluir lixamento, selamento ou aplicação de massa corrida."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "A Ávila Cortinas atende cidades da região além de Criciúma?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim. A Ávila Cortinas realiza atendimento e instalação em Criciúma e nas principais cidades da região, incluindo Içara, Siderópolis, Nova Veneza, Forquilhinha, Morro da Fumaça, Urussanga e arredores — em um raio aproximado de 30 km do nosso showroom. Para projetos em outras localidades, consulte nossa equipe para verificar a disponibilidade."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Os produtos e a instalação têm garantia? Como funciona o pós-venda?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim. Todos os nossos produtos são fabricados com materiais de qualidade comprovada e passam por controle rigoroso antes da instalação. Oferecemos garantia tanto nos produtos quanto na mão de obra. Nosso compromisso não termina na entrega — estamos disponíveis para suporte, ajustes e orientações de conservação via WhatsApp, telefone ou diretamente em nosso showroom em Criciúma."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- BLOCO 5: Service (por serviço, via @graph) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Service",
+          "name": "Cortinas Sob Medida",
+          "description": "Modelos personalizados para valorizar salas, quartos e ambientes especiais.",
+          "provider": { "@id": "https://cortinasavila.shop/#organization" },
+          "areaServed": "Criciúma e região, SC"
+        },
+        {
+          "@type": "Service",
+          "name": "Persianas",
+          "description": "Controle de luz, privacidade e sofisticação com excelente acabamento.",
+          "provider": { "@id": "https://cortinasavila.shop/#organization" },
+          "areaServed": "Criciúma e região, SC"
+        },
+        {
+          "@type": "Service",
+          "name": "Piso Vinílico e Laminado",
+          "description": "Soluções elegantes, aconchegantes e funcionais com instalação profissional.",
+          "provider": { "@id": "https://cortinasavila.shop/#organization" },
+          "areaServed": "Criciúma e região, SC"
+        },
+        {
+          "@type": "Service",
+          "name": "Papel de Parede",
+          "description": "Transformação visual com texturas, estampas e curadoria especializada.",
+          "provider": { "@id": "https://cortinasavila.shop/#organization" },
+          "areaServed": "Criciúma e região, SC"
+        },
+        {
+          "@type": "Service",
+          "name": "Rodapés",
+          "description": "Acabamentos que valorizam o ambiente com unidade e refinamento.",
+          "provider": { "@id": "https://cortinasavila.shop/#organization" },
+          "areaServed": "Criciúma e região, SC"
+        }
+      ]
+    }
+    </script>
+
+    <!-- BLOCO 6: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://cortinasavila.shop/"
+        }
+      ]
+    }
+    </script>
+
+</head>
+<body class="text-deepCharcoal bg-brandIce antialiased selection:bg-brandSand selection:text-white">
+
+    <!-- Header (Minimalista e Elegante) -->
+    <header x-data="{ mobileMenuOpen: false, scrolled: false }" 
+            @scroll.window="scrolled = (window.pageYOffset > 50)"
+            :class="scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'"
+            class="fixed w-full z-50 transition-all duration-500 border-b border-transparent"
+            :style="scrolled ? 'border-color: rgba(0,0,0,0.05)' : ''">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 flex justify-between items-center">
+            <a href="#hero" class="relative z-50 flex items-center">
+                <img src="assets/img/logo.png" alt="Ávila Cortinas e Persianas" class="w-36 md:w-48 h-auto object-contain drop-shadow-md lux-transition" :class="scrolled ? 'opacity-100' : 'opacity-90 contrast-125 brightness-150'">
+            </a>
+            
+            <nav class="hidden md:flex space-x-10 text-[13px] uppercase tracking-[0.15em] font-medium items-center transition-colors duration-500" :class="scrolled ? 'text-deepCharcoal' : 'text-white'">
+                <a href="#colecoes" class="hover:text-brandSand transition duration-300">Coleções</a>
+                <a href="#inspiracao" class="hover:text-brandSand transition duration-300">Inspiração</a>
+                <a href="#processo" class="hover:text-brandSand transition duration-300">Atendimento</a>
+                <a href="#showroom" class="hover:text-brandSand transition duration-300">Showroom</a>
+                <a href="tour-virtual.html" class="flex items-center gap-1.5 hover:text-brandSand transition duration-300">
+                    <svg class="w-3.5 h-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+                    Tour Virtual
+                </a>
+                <a href="https://wa.me/554834372422" target="_blank" class="px-6 py-3 border transition duration-500" :class="scrolled ? 'border-deepCharcoal hover:bg-deepCharcoal hover:text-white' : 'border-white hover:bg-white hover:text-deepCharcoal'">Solicitar Orçamento</a>
+            </nav>
+
+            <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden relative z-50 p-2 focus:outline-none transition-colors duration-500" :class="scrolled ? 'text-deepCharcoal' : 'text-white'">
+                <svg class="h-8 w-8 lux-transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path x-show="!mobileMenuOpen" stroke-linecap="square" stroke-linejoin="miter" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/>
+                    <path x-show="mobileMenuOpen" stroke-linecap="square" stroke-linejoin="miter" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" style="display: none;"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Menu (Fullscreen Modal) -->
+        <div x-show="mobileMenuOpen" x-transition.opacity.duration.500ms class="fixed inset-0 bg-brandIce z-40 flex flex-col justify-center items-center h-screen" style="display: none;">
+            <div class="flex flex-col items-center space-y-8 text-lg font-light tracking-[0.2em] uppercase">
+                <a @click="mobileMenuOpen = false" href="#colecoes" class="hover:text-brandSand">Coleções</a>
+                <a @click="mobileMenuOpen = false" href="#inspiracao" class="hover:text-brandSand">Inspiração</a>
+                <a @click="mobileMenuOpen = false" href="#processo" class="hover:text-brandSand">Atendimento</a>
+                <a @click="mobileMenuOpen = false" href="#showroom" class="hover:text-brandSand">Showroom</a>
+                <a @click="mobileMenuOpen = false" href="tour-virtual.html" class="flex items-center gap-2 hover:text-brandSand">
+                    <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+                    Tour Virtual
+                </a>
+                <a @click="mobileMenuOpen = false" href="https://wa.me/554834372422" class="mt-8 border-b-2 border-brandSand pb-1 text-warmWood">Falar no WhatsApp</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 1. Hero Section (Sofisticado / Vídeo Loop) -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden" x-data="heroVideoSlider()">
+        <div class="absolute inset-0 z-0 bg-deepCharcoal">
+            <video x-ref="vid1" muted playsinline class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out" :class="activeVid === 1 ? 'opacity-70' : 'opacity-0'"></video>
+            <video x-ref="vid2" muted playsinline class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out" :class="activeVid === 2 ? 'opacity-70' : 'opacity-0'"></video>
+            <!-- Gradiente de cor areia/quente para unificar tons ao vídeo -->
+            <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/90 via-deepCharcoal/40 to-transparent mix-blend-multiply"></div>
+        </div>
+
+        <div class="relative z-10 w-full px-6 lg:px-12 text-center text-white pt-24">
+            <p class="uppercase tracking-[0.3em] text-xs sm:text-sm font-medium text-brandPeach mb-6">Arquitetura de interiores em Criciúma</p>
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-serif leading-[1.1] max-w-5xl mx-auto mb-8 text-white drop-shadow-sm">
+                Soluções Sob Medida para Ambientes Sofisticados
+            </h1>
+            <p class="text-lg md:text-xl font-light mb-12 max-w-2xl mx-auto opacity-90 text-gray-200">
+                Transforme seu espaço com nosso acervo exclusivo de cortinas, persianas e revestimentos. Acabamento impecável e atendimento consultivo especializado.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+                <a href="#colecoes" class="w-full sm:w-auto px-10 py-4 bg-brandSand text-white uppercase tracking-[0.1em] text-sm hover:bg-warmWood lux-transition shadow-xl">
+                    Explorar Opções
+                </a>
+                <a href="https://wa.me/554834372422" target="_blank" class="w-full sm:w-auto px-10 py-4 border border-white text-white uppercase tracking-[0.1em] text-sm hover:bg-white hover:text-deepCharcoal lux-transition">
+                    Solicitar Orçamento
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Escolha Sua Solução (Coleções Minimalistas) -->
+    <section id="colecoes" class="py-24 md:py-32 px-6 lg:px-12 bg-brandIce">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <p class="uppercase tracking-[0.2em] text-brandBlue text-xs font-semibold mb-4">Nossas Especialidades</p>
+                <h2 class="text-3xl md:text-5xl font-serif text-deepCharcoal">Escolha Sua Solução</h2>
+                <div class="w-12 h-[1px] bg-brandBlue/40 mx-auto mt-8"></div>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Categoria 1 -->
+                <a href="https://wa.me/554834372422?text=Ol%C3%A1%21%20Eu%20gostaria%20de%20um%20or%C3%A7amento%20para%20Cortinas." target="_blank" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
+                    <img src="assets/img/cortina-02.jpg" alt="Cortinas sob medida em tecido elegante instaladas em sala de estar — Ávila Criciúma" class="absolute inset-0 w-full h-full object-cover object-center opacity-90 group-hover:scale-105 group-hover:opacity-100 lux-transition" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/80 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-8 w-full text-white transform group-hover:-translate-y-2 lux-transition">
+                        <h3 class="text-2xl font-serif mb-2">Cortinas</h3>
+                        <p class="font-light text-sm opacity-0 group-hover:opacity-100 overflow-hidden max-h-0 group-hover:max-h-20 lux-transition text-brandPeach">Sob medida para vestir seu ambiente com fluidez e requinte.</p>
+                        <div class="mt-4 flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-brandSand group-hover:text-white">
+                            Orçar Agora <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Categoria 2 -->
+                <a href="https://wa.me/554834372422?text=Ol%C3%A1%21%20Eu%20gostaria%20de%20um%20or%C3%A7amento%20para%20Persianas." target="_blank" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
+                    <img src="assets/img/servico-persianas.jpg" alt="Persianas sob medida com controle preciso de luz — Ávila Cortinas Criciúma" class="absolute inset-0 w-full h-full object-cover object-center opacity-90 group-hover:scale-105 group-hover:opacity-100 lux-transition" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/80 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-8 w-full text-white transform group-hover:-translate-y-2 lux-transition">
+                        <h3 class="text-2xl font-serif mb-2">Persianas</h3>
+                        <p class="font-light text-sm opacity-0 group-hover:opacity-100 overflow-hidden max-h-0 group-hover:max-h-20 lux-transition text-brandPeach">Controle exato de luz com design contemporâneo.</p>
+                        <div class="mt-4 flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-brandSand group-hover:text-white">
+                            Orçar Agora <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Categoria 3 -->
+                <a href="https://wa.me/554834372422?text=Ol%C3%A1%21%20Eu%20gostaria%20de%20um%20or%C3%A7amento%20para%20Papel%20de%20Parede." target="_blank" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
+                    <img src="assets/img/servico-papel.jpg" alt="Papel de parede de alto padrão aplicado em ambiente decorado — Ávila Criciúma" class="absolute inset-0 w-full h-full object-cover object-top opacity-90 group-hover:scale-105 group-hover:opacity-100 lux-transition" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/80 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-8 w-full text-white transform group-hover:-translate-y-2 lux-transition">
+                        <h3 class="text-2xl font-serif mb-2">Papel de Parede</h3>
+                        <p class="font-light text-sm opacity-0 group-hover:opacity-100 overflow-hidden max-h-0 group-hover:max-h-20 lux-transition text-brandPeach">Texturas inovadoras e estampas para destacar paredes.</p>
+                        <div class="mt-4 flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-brandSand group-hover:text-white">
+                            Orçar Agora <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Categoria 4 -->
+                <a href="https://wa.me/554834372422?text=Ol%C3%A1%21%20Eu%20gostaria%20de%20um%20or%C3%A7amento%20para%20Piso%20Vin%C3%ADlico." target="_blank" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
+                    <img src="assets/img/servico-piso.jpg" alt="Piso vinílico laminado instalado profissionalmente em residência em Criciúma" class="absolute inset-0 w-full h-full object-cover object-top opacity-90 group-hover:scale-105 group-hover:opacity-100 lux-transition" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/80 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-8 w-full text-white transform group-hover:-translate-y-2 lux-transition">
+                        <h3 class="text-2xl font-serif mb-2">Pisos Vinílicos</h3>
+                        <p class="font-light text-sm opacity-0 group-hover:opacity-100 overflow-hidden max-h-0 group-hover:max-h-20 lux-transition text-brandPeach">Conforto térmico impecável e apelo da madeira.</p>
+                        <div class="mt-4 flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-brandSand group-hover:text-white">
+                            Orçar Agora <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Atendimento Consultivo Completo (Concierge) -->
+    <section id="processo" class="py-24 bg-[#F2F0EB]">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <div class="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
+                <div class="lg:w-1/2">
+                    <p class="uppercase tracking-[0.2em] text-brandBlue text-xs font-semibold mb-4">Experiência Ávila</p>
+                    <h2 class="text-3xl md:text-5xl font-serif text-deepCharcoal mb-8 leading-tight">Atendimento Consultivo Completo</h2>
+                    <p class="font-light text-lg mb-10 text-warmWood">Nossa equipe de consultores acompanha você com exclusividade desde o entendimento da planta até as finalizações. O verdadeiro luxo está na tranquilidade de um processo perfeito.</p>
+                    
+                    <div class="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-brandSand/30 before:to-transparent">
+                        <!-- Step 1 -->
+                        <div class="relative flex items-center gap-6">
+                            <div class="w-10 h-10 rounded-full bg-brandIce border border-brandSand shadow-sm flex items-center justify-center font-serif text-warmWood z-10 font-bold shrink-0">1</div>
+                            <div>
+                                <h3 class="text-xl font-medium text-deepCharcoal mb-1">Entendimento do Ambiente</h3>
+                                <p class="font-light text-sm text-warmWood">Leitura de necessidades, luminosidade e proposta estética do local.</p>
+                            </div>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="relative flex items-center gap-6">
+                            <div class="w-10 h-10 rounded-full bg-brandIce border border-brandSand shadow-sm flex items-center justify-center font-serif text-warmWood z-10 font-bold shrink-0">2</div>
+                            <div>
+                                <h3 class="text-xl font-medium text-deepCharcoal mb-1">Curadoria de Materiais</h3>
+                                <p class="font-light text-sm text-warmWood">Seleção criteriosa dos tecidos, mecanismos e acabamentos no Showroom.</p>
+                            </div>
+                        </div>
+                        <!-- Step 3 -->
+                        <div class="relative flex items-center gap-6">
+                            <div class="w-10 h-10 rounded-full bg-brandIce border border-brandSand shadow-sm flex items-center justify-center font-serif text-warmWood z-10 font-bold shrink-0">3</div>
+                            <div>
+                                <h3 class="text-xl font-medium text-deepCharcoal mb-1">Projeto Personalizado</h3>
+                                <p class="font-light text-sm text-warmWood">Exatidão nas medidas, design funcional e elaboração da melhor solução técnica.</p>
+                            </div>
+                        </div>
+                        <!-- Step 4 -->
+                        <div class="relative flex items-center gap-6">
+                            <div class="w-10 h-10 rounded-full bg-warmWood shadow-lg flex items-center justify-center font-serif text-white z-10 shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-medium text-deepCharcoal mb-1">Instalação com Excelência</h3>
+                                <p class="font-light text-sm text-warmWood">Equipe técnica própria com cuidado cirúrgico com a sua casa.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-1/2 relative">
+                    <div class="absolute -inset-4 bg-brandSand/10 md:transform md:translate-x-8 md:translate-y-8 z-0"></div>
+                    <video
+                        autoplay
+                        muted
+                        loop
+                        playsinline
+                        class="relative z-10 w-full h-auto aspect-[3/4] object-cover shadow-2xl"
+                        aria-label="Consultora Ávila apresentando tecidos e materiais no showroom em Criciúma">
+                        <source src="assets/video/atendimento.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Inspire-se (Editorial Layout) -->
+    <section id="inspiracao" class="py-24 md:py-32 bg-brandIce px-6 lg:px-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                <div>
+                    <h2 class="text-3xl md:text-5xl font-serif text-deepCharcoal mb-4">Galeria de Inspirações</h2>
+                    <p class="font-light text-warmWood max-w-xl">Um portfólio visual dedicado a revelar o potencial das nossas soluções de alto padrão. Ambientes reais, curadoria excepcional.</p>
+                </div>
+                <!-- Oculto para focar inteiramente em Whatsapp conversion se clicar. -->
+                <a href="#colecoes" class="text-xs uppercase tracking-[0.15em] border-b border-deepCharcoal pb-1 hover:text-brandSand hover:border-brandSand lux-transition whitespace-nowrap">Conhecer Produtos</a>
+            </div>
+
+            <!-- Grids Assimétricos (Masonry feel) -->
+            <div class="gallery-grid">
+                <div class="group relative overflow-hidden bg-brandPeach/20 tall">
+                    <img src="assets/img/inspire-1.webp" alt="Sala de estar decorada com cortinas sob medida em Criciúma" class="w-full h-full object-cover group-hover:scale-105 lux-transition" loading="lazy">
+                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 lux-transition flex items-center justify-center">
+                        <span class="text-white uppercase tracking-widest text-xs border border-white px-4 py-2">Salas de Estar</span>
+                    </div>
+                </div>
+                <div class="group relative overflow-hidden bg-brandPeach/20 wide">
+                    <img src="assets/img/inspire-2.webp" alt="Quarto suíte com persianas sob medida e decoração de alto padrão" class="w-full h-full object-cover group-hover:scale-105 lux-transition" loading="lazy">
+                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 lux-transition flex items-center justify-center">
+                        <span class="text-white uppercase tracking-widest text-xs border border-white px-4 py-2">Quartos Suíte</span>
+                    </div>
+                </div>
+                <div class="group relative overflow-hidden bg-brandPeach/20">
+                    <img src="assets/img/inspire-3.webp" alt="Ambiente corporativo com persianas e cortinas instaladas pela Ávila" class="w-full h-full object-cover group-hover:scale-105 lux-transition" loading="lazy">
+                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 lux-transition flex items-center justify-center">
+                        <span class="text-white uppercase tracking-widest text-xs border border-white px-4 py-2">Corporativo</span>
+                    </div>
+                </div>
+                <div class="group relative overflow-hidden bg-brandPeach/20">
+                    <img src="assets/img/inspire-4.webp" alt="Sala de jantar com cortinas elegantes e piso vinílico Ávila" class="w-full h-full object-cover group-hover:scale-105 lux-transition" loading="lazy">
+                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 lux-transition flex items-center justify-center">
+                        <span class="text-white uppercase tracking-widest text-xs border border-white px-4 py-2">Salas de Jantar</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Showroom & Orçamento Direto -->
+    <section id="showroom" class="py-24 bg-brandPeach/30">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="text-3xl md:text-5xl font-serif text-deepCharcoal mb-6">Pronto para elevar seu ambiente?</h2>
+            <p class="font-light text-warmWood mb-12 text-lg">Visite nosso showroom em Criciúma ou acione nosso especialista agora pelo conforto do seu celular.</p>
+            
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+                <a href="https://wa.me/554834372422" target="_blank" class="w-full sm:w-auto px-10 py-5 bg-deepCharcoal text-white uppercase tracking-[0.1em] text-sm hover:bg-black lux-transition shadow-lg flex items-center justify-center gap-3">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                    Falar com Especialista Web
+                </a>
+            </div>
+            
+            <div class="mt-16 bg-white p-8 md:p-12 shadow-sm border border-brandPeach/50 text-left relative overflow-hidden">
+                <div class="grid md:grid-cols-2 gap-12 relative z-10">
+                    <div>
+                        <h3 class="font-serif text-xl border-b border-brandSand pb-2 mb-6">Showroom</h3>
+                        <p class="font-light text-warmWood mb-2">Rua Henrique Lage, 1215</p>
+                        <p class="font-light text-warmWood mb-6">Santa Bárbara — Criciúma/SC</p>
+                        <h3 class="font-serif text-xl border-b border-brandSand pb-2 mb-6">Horários</h3>
+                        <p class="font-light text-warmWood mb-2">Seg à Sex: 08:30–12:00 | 13:30–18:00</p>
+                        <p class="font-light text-warmWood">Sábados: 08:30–12:00</p>
+                    </div>
+                    <div class="h-full min-h-[250px] bg-gray-100">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3509.309440625619!2d-49.37890202450379!3d-28.703417775626297!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x952182be4da16ea3%3A0xbdc67e1a38a06eab!2sR.%20Henrique%20Lage%2C%201215%20-%20Santa%20B%C3%A1rbara%2C%20Crici%C3%BAma%20-%20SC%2C%2088804-010!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. FAQ -->
+    <section id="faq" class="py-24 md:py-32 bg-[#F2F0EB]" x-data="{ active: null }">
+        <div class="max-w-4xl mx-auto px-6 lg:px-12">
+
+            <div class="text-center mb-20">
+                <p class="uppercase tracking-[0.2em] text-brandBlue text-xs font-semibold mb-4">Dúvidas Frequentes</p>
+                <h2 class="text-3xl md:text-5xl font-serif text-deepCharcoal">Perguntas Frequentes</h2>
+                <div class="w-12 h-[1px] bg-brandBlue/40 mx-auto mt-8"></div>
+                <p class="mt-8 font-light text-warmWood max-w-xl mx-auto">Reunimos as principais dúvidas dos nossos clientes para tornar sua decisão mais segura e informada.</p>
+            </div>
+
+            <div>
+
+                <!-- Q1 -->
+                <div class="faq-item" :class="active === 1 ? 'faq-active' : ''">
+                    <button @click="active = active === 1 ? null : 1" class="w-full flex items-center justify-between gap-6 px-6 py-8 text-left group">
+                        <div class="flex items-start gap-6">
+                            <span class="faq-num font-serif text-xs tracking-widest shrink-0 mt-0.5 w-5 text-brandSand">01</span>
+                            <h3 class="faq-q font-light text-base md:text-lg leading-snug text-deepCharcoal">Cortinas sob medida realmente fazem diferença no ambiente?</h3>
+                        </div>
+                        <svg class="faq-icon w-5 h-5 text-brandSand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </button>
+                    <div class="faq-body" :class="active === 1 ? 'faq-open' : ''">
+                        <p class="pb-8 pr-6 pl-[4.25rem] font-light text-sm md:text-[15px] text-warmWood leading-relaxed">Sim, e de forma significativa. Cortinas sob medida eliminam folgas, tecidos desnecessários e o aspecto improvisado das peças de prateleira. O resultado é um ambiente mais coeso, sofisticado e com acabamento de projeto de arquitetura de interiores. Além disso, permitem a escolha precisa de tecido, opacidade, mecanismo e ferragem — cada detalhe pensado especificamente para o seu espaço.</p>
+                    </div>
+                </div>
+
+                <!-- Q2 -->
+                <div class="faq-item" :class="active === 2 ? 'faq-active' : ''">
+                    <button @click="active = active === 2 ? null : 2" class="w-full flex items-center justify-between gap-6 px-6 py-8 text-left group">
+                        <div class="flex items-start gap-6">
+                            <span class="faq-num font-serif text-xs tracking-widest shrink-0 mt-0.5 w-5 text-brandSand">02</span>
+                            <h3 class="faq-q font-light text-base md:text-lg leading-snug text-deepCharcoal">Qual a diferença entre persiana rolô e persiana romana?</h3>
+                        </div>
+                        <svg class="faq-icon w-5 h-5 text-brandSand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </button>
+                    <div class="faq-body" :class="active === 2 ? 'faq-open' : ''">
+                        <p class="pb-8 pr-6 pl-[4.25rem] font-light text-sm md:text-[15px] text-warmWood leading-relaxed">A persiana rolô é enrolada internamente em um tubo, criando aparência minimalista e contemporânea — ideal para escritórios, quartos e ambientes de linha limpa. A persiana romana dobra em pregas horizontais ao ser aberta, transmitindo elegância e amplitude, sendo muito valorizada em salas de estar e quartos de alto padrão. A escolha entre elas depende do estilo do ambiente, da funcionalidade desejada e do volume de luz que se quer controlar.</p>
+                    </div>
+                </div>
+
+                <!-- Q3 -->
+                <div class="faq-item" :class="active === 3 ? 'faq-active' : ''">
+                    <button @click="active = active === 3 ? null : 3" class="w-full flex items-center justify-between gap-6 px-6 py-8 text-left group">
+                        <div class="flex items-start gap-6">
+                            <span class="faq-num font-serif text-xs tracking-widest shrink-0 mt-0.5 w-5 text-brandSand">03</span>
+                            <h3 class="faq-q font-light text-base md:text-lg leading-snug text-deepCharcoal">Como escolher a melhor cortina para o quarto?</h3>
+                        </div>
+                        <svg class="faq-icon w-5 h-5 text-brandSand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </button>
+                    <div class="faq-body" :class="active === 3 ? 'faq-open' : ''">
+                        <p class="pb-8 pr-6 pl-[4.25rem] font-light text-sm md:text-[15px] text-warmWood leading-relaxed">Para quartos, os principais fatores são controle de luz e privacidade. Tecidos blackout bloqueiam quase 100% da entrada de luz — perfeitos para quem tem sono leve ou trabalha em horários alternativos. Para quem prefere uma entrada suave de luz natural, tecidos semi-blackout ou voil duplo são excelentes escolhas. Também levamos em conta a paleta de cores do quarto, a altura do pé-direito e o tamanho da janela para indicar o modelo ideal.</p>
+                    </div>
+                </div>
+
+                <!-- Q4 -->
+                <div class="faq-item" :class="active === 4 ? 'faq-active' : ''">
+                    <button @click="active = active === 4 ? null : 4" class="w-full flex items-center justify-between gap-6 px-6 py-8 text-left group">
+                        <div class="flex items-start gap-6">
+                            <span class="faq-num font-serif text-xs tracking-widest shrink-0 mt-0.5 w-5 text-brandSand">04</span>
+                            <h3 class="faq-q font-light text-base md:text-lg leading-snug text-deepCharcoal">Qual é o prazo médio para fabricação e instalação dos produtos?</h3>
+                        </div>
+                        <svg class="faq-icon w-5 h-5 text-brandSand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </button>
+                    <div class="faq-body" :class="active === 4 ? 'faq-open' : ''">
+                        <p class="pb-8 pr-6 pl-[4.25rem] font-light text-sm md:text-[15px] text-warmWood leading-relaxed">O prazo varia conforme o produto e a complexidade do projeto, mas em geral trabalhamos com um ciclo de 10 a 20 dias úteis entre a medição, fabricação e agendamento da instalação. Para projetos maiores ou com personalizações especiais, o prazo pode ser maior. Nossa equipe informa a estimativa precisa no momento do orçamento, garantindo transparência em todo o processo.</p>
+                    </div>
+                </div>
+
+                <!-- Q5 -->
+                <div class="faq-item" :class="active === 5 ? 'faq-active' : ''">
+                    <button @click="active = active === 5 ? null : 5" class="w-full flex items-center justify-between gap-6 px-6 py-8 text-left group">
+                        <div class="flex items-start gap-6">
+                            <span class="faq-num font-serif text-xs tracking-widest shrink-0 mt-0.5 w-5 text-brandSand">05</span>
+                            <h3 class="faq-q font-light text-base md:text-lg leading-snug text-deepCharcoal">Piso vinílico é adequado para ambientes úmidos como cozinha e banheiro?</h3>
+                        </div>
+                        <svg class="faq-icon w-5 h-5 text-brandSand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </button>
+                    <div class="faq-body" :class="active === 5 ? 'faq-open' : ''">
+                        <p class="pb-8 pr-6 pl-[4.25rem] font-light text-sm md:text-[15px] text-warmWood leading-relaxed">Sim. O piso vinílico é uma das soluções mais indicadas para ambientes úmidos justamente por sua impermeabilidade. Diferente do laminado de madeira, ele não sofre com empolamento ou deformação causados pela umidade. Além disso, é de fácil higienização, antiderrapante e oferece conforto térmico e acústico superiores ao piso frio convencional — tornando-se uma escolha inteligente para cozinhas, lavabos, banheiros e lavanderias.</p>
+                    </div>
+                </div>
+
+                <!-- Q6 -->
+                <div class="faq-item" :class="active === 6 ? 'faq-active' : ''">
+                    <button @click="active = active === 6 ? null : 6" class="w-full flex items-center justify-between gap-6 px-6 py-8 text-left group">
+                        <div class="flex items-start gap-6">
+                            <span class="faq-num font-serif text-xs tracking-widest shrink-0 mt-0.5 w-5 text-brandSand">06</span>
+                            <h3 class="faq-q font-light text-base md:text-lg leading-snug text-deepCharcoal">Papel de parede pode ser aplicado sobre parede com textura?</h3>
+                        </div>
+                        <svg class="faq-icon w-5 h-5 text-brandSand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </button>
+                    <div class="faq-body" :class="active === 6 ? 'faq-open' : ''">
+                        <p class="pb-8 pr-6 pl-[4.25rem] font-light text-sm md:text-[15px] text-warmWood leading-relaxed">Depende do tipo e da intensidade da textura. Texturas muito acentuadas exigem preparação prévia da superfície para garantir aderência e uniformidade no resultado final. Nossa equipe avalia o estado da parede antes da aplicação e, quando necessário, indica a preparação correta — que pode incluir lixamento, selamento ou aplicação de massa corrida. Dessa forma, garantimos durabilidade e beleza no acabamento.</p>
+                    </div>
+                </div>
+
+                <!-- Q7 -->
+                <div class="faq-item" :class="active === 7 ? 'faq-active' : ''">
+                    <button @click="active = active === 7 ? null : 7" class="w-full flex items-center justify-between gap-6 px-6 py-8 text-left group">
+                        <div class="flex items-start gap-6">
+                            <span class="faq-num font-serif text-xs tracking-widest shrink-0 mt-0.5 w-5 text-brandSand">07</span>
+                            <h3 class="faq-q font-light text-base md:text-lg leading-snug text-deepCharcoal">A Ávila Cortinas atende cidades da região além de Criciúma?</h3>
+                        </div>
+                        <svg class="faq-icon w-5 h-5 text-brandSand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </button>
+                    <div class="faq-body" :class="active === 7 ? 'faq-open' : ''">
+                        <p class="pb-8 pr-6 pl-[4.25rem] font-light text-sm md:text-[15px] text-warmWood leading-relaxed">Sim. A Ávila Cortinas realiza atendimento e instalação em Criciúma e nas principais cidades da região, incluindo Içara, Siderópolis, Nova Veneza, Forquilhinha, Morro da Fumaça, Urussanga e arredores — em um raio aproximado de 30 km do nosso showroom. Para projetos em outras localidades, entre em contato para verificarmos a disponibilidade de atendimento.</p>
+                    </div>
+                </div>
+
+                <!-- Q8 -->
+                <div class="faq-item" :class="active === 8 ? 'faq-active' : ''">
+                    <button @click="active = active === 8 ? null : 8" class="w-full flex items-center justify-between gap-6 px-6 py-8 text-left group">
+                        <div class="flex items-start gap-6">
+                            <span class="faq-num font-serif text-xs tracking-widest shrink-0 mt-0.5 w-5 text-brandSand">08</span>
+                            <h3 class="faq-q font-light text-base md:text-lg leading-snug text-deepCharcoal">Os produtos têm garantia? Como funciona o pós-venda?</h3>
+                        </div>
+                        <svg class="faq-icon w-5 h-5 text-brandSand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </button>
+                    <div class="faq-body" :class="active === 8 ? 'faq-open' : ''">
+                        <p class="pb-8 pr-6 pl-[4.25rem] font-light text-sm md:text-[15px] text-warmWood leading-relaxed">Sim. Todos os nossos produtos são fabricados com materiais de qualidade comprovada e passam por controle rigoroso antes da instalação. Oferecemos garantia tanto nos produtos quanto na mão de obra. Nosso compromisso não termina na entrega — estamos disponíveis para suporte, ajustes e orientações de conservação via WhatsApp, telefone ou diretamente em nosso showroom em Criciúma.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- CTA -->
+            <div class="mt-20 text-center">
+                <p class="font-light text-warmWood text-sm mb-8 tracking-wide">Sua dúvida não está aqui? Fale diretamente com nosso especialista.</p>
+                <a href="https://wa.me/554834372422" target="_blank" class="inline-flex items-center gap-3 px-10 py-4 border border-deepCharcoal text-deepCharcoal uppercase tracking-[0.1em] text-xs hover:bg-deepCharcoal hover:text-white lux-transition">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                    Tirar dúvida no WhatsApp
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 7. Footer (Pastel Alongado) -->
+    <footer class="bg-[#F2EAE5] text-deepCharcoal py-24 md:py-32 border-t border-brandSand/20 relative">
+        <!-- Detalhe arquitetônico minimalista no topo -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-warmWood/30 mt-2"></div>
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-12">
+            <div>
+                <a href="#hero" class="inline-block mb-10">
+                    <img src="assets/img/logo.png" alt="Ávila Cortinas e Persianas" class="w-40 md:w-56 h-auto object-contain drop-shadow-sm lux-transition">
+                </a>
+                <p class="font-light text-sm opacity-60 leading-relaxed max-w-sm">Curadoria e sofisticação em cortinas, persianas e soluções decorativas para quem valoriza a excelência do design de interiores.</p>
+            </div>
+            <div class="md:text-center">
+                <h3 class="font-serif text-lg tracking-widest mb-6">Páginas</h3>
+                <ul class="space-y-4 font-light text-sm opacity-80 uppercase tracking-widest">
+                    <li><a href="#colecoes" class="hover:text-brandSand lux-transition">Coleções</a></li>
+                    <li><a href="#inspiracao" class="hover:text-brandSand lux-transition">Inspirar-se</a></li>
+                    <li><a href="#processo" class="hover:text-brandSand lux-transition">Atendimento</a></li>
+                    <li><a href="#faq" class="hover:text-brandSand lux-transition">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="md:text-right">
+                <h3 class="font-serif text-lg tracking-widest mb-6">Sociais</h3>
+                <div class="flex md:justify-end gap-6 mb-6">
+                    <a href="https://www.instagram.com/cortinasavila/" class="opacity-80 hover:text-brandSand hover:opacity-100 lux-transition">
+                        Instagram
+                    </a>
+                    <a href="https://www.facebook.com/avilacortinaspersianas" class="opacity-80 hover:text-brandSand hover:opacity-100 lux-transition">
+                        Facebook
+                    </a>
+                </div>
+                <p class="font-light text-sm opacity-60 uppercase tracking-widest">(48) 3437-2422</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 mt-20 pt-10 border-t border-warmWood/10 flex flex-col md:flex-row justify-between items-center text-[10px] md:text-xs opacity-60 font-light tracking-widest uppercase">
+            <p>&copy; 2026 Ávila Cortinas de Alto Padrão.</p>
+            <p class="mt-4 md:mt-0 opacity-70">Design e Desenvolvimento: OFS Digital</p>
+        </div>
+    </footer>
+
+    <!-- Botão "Secret/Subtle" flutuante p/ Desktop, discreto em Luxo -->
+    <a href="https://wa.me/554834372422" target="_blank" class="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 w-14 h-14 bg-deepCharcoal text-white rounded-full flex items-center justify-center shadow-2xl hover:bg-warmWood hover:scale-110 lux-transition z-50 group">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        <span class="absolute right-16 bg-deepCharcoal text-white text-xs whitespace-nowrap px-3 py-1 rounded-sm opacity-0 group-hover:opacity-100 lux-transition tracking-widest hidden md:block">Assistente Ávila</span>
+    </a>
+</body>
+</html>
