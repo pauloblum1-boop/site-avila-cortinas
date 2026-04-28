@@ -428,8 +428,8 @@
     <!-- 1. Hero Section (Sofisticado / Vídeo Loop) -->
     <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden" x-data="heroVideoSlider()">
         <div class="absolute inset-0 z-0 bg-deepCharcoal">
-            <video x-ref="vid1" muted playsinline preload="none" poster="assets/img/cortina-02.jpg" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out" :class="activeVid === 1 ? 'opacity-70' : 'opacity-0'"></video>
-            <video x-ref="vid2" muted playsinline preload="none" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out" :class="activeVid === 2 ? 'opacity-70' : 'opacity-0'"></video>
+            <video x-ref="vid1" autoplay muted playsinline preload="none" poster="assets/img/cortina-02.jpg" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out" :class="activeVid === 1 ? 'opacity-70' : 'opacity-0'"></video>
+            <video x-ref="vid2" autoplay muted playsinline preload="none" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out" :class="activeVid === 2 ? 'opacity-70' : 'opacity-0'"></video>
             <!-- Gradiente de cor areia/quente para unificar tons ao vídeo -->
             <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/90 via-deepCharcoal/40 to-transparent mix-blend-multiply"></div>
         </div>
@@ -569,8 +569,11 @@
                     <div class="video-wrapper relative z-10 shadow-2xl w-full aspect-[3/4]">
                         <video
                             id="atendimento-video"
-                            preload="none"
+                            autoplay
+                            muted
+                            loop
                             playsinline
+                            preload="none"
                             class="w-full h-full object-cover"
                             aria-label="Consultora Ávila apresentando tecidos e materiais no showroom em Criciúma">
                             <source data-src="assets/video/atendimento.webm" type="video/webm">
@@ -888,11 +891,16 @@
         // Lazy load: só baixa o vídeo ao entrar na viewport (+ 300px de margem)
         if ('IntersectionObserver' in window) {
             var io = new IntersectionObserver(function (entries) {
-                if (entries[0].isIntersecting) { loadSources(); io.unobserve(wrapper); }
+                if (entries[0].isIntersecting) {
+                    loadSources();
+                    videoEl.play().catch(function () {});
+                    io.unobserve(wrapper);
+                }
             }, { rootMargin: '300px 0px' });
             io.observe(wrapper);
         } else {
             loadSources();
+            videoEl.play().catch(function () {});
         }
 
         function setPlaying(playing) {
