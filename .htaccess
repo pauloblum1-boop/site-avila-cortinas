@@ -48,10 +48,11 @@ ErrorDocument 404 /index.html
 <IfModule mod_expires.c>
     ExpiresActive On
 
-    # HTML — 1 hora
+    # HTML — sem cache (atualizações refletem imediatamente)
     <FilesMatch "\.(html|htm)$">
-        ExpiresDefault "access plus 1 hour"
-        Header set Cache-Control "public, max-age=3600, must-revalidate"
+        ExpiresDefault "access plus 0 seconds"
+        Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
     </FilesMatch>
 
     # Imagens e mídias — 1 mês
