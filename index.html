@@ -31,26 +31,35 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/img/favicon-192x192.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
+    <link rel="preload" as="image" href="assets/img/cortina-02.jpg" fetchpriority="high">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('heroVideoSlider', () => ({
-                videos: ['assets/video/hero-01.mp4', 'assets/video/hero-02.mp4', 'assets/video/hero-03.mp4'],
+                videos: [
+                    { mp4: 'assets/video/hero-01.mp4', webm: 'assets/video/hero-01.webm' },
+                    { mp4: 'assets/video/hero-02.mp4', webm: 'assets/video/hero-02.webm' },
+                    { mp4: 'assets/video/hero-03.mp4', webm: 'assets/video/hero-03.webm' }
+                ],
                 currentIndex: 0,
                 activeVid: 1,
+                supportsWebM: false,
                 init() {
-                    this.$refs.vid1.src = this.videos[0];
-                    this.$refs.vid1.play();
-                    
+                    this.supportsWebM = document.createElement('video').canPlayType('video/webm; codecs="vp9"') !== '';
+                    this.loadVideo(this.$refs.vid1, 0);
                     this.$refs.vid1.addEventListener('ended', () => this.swapVideo(this.$refs.vid1, this.$refs.vid2));
                     this.$refs.vid2.addEventListener('ended', () => this.swapVideo(this.$refs.vid2, this.$refs.vid1));
                 },
+                loadVideo(el, index) {
+                    const v = this.videos[index];
+                    el.src = (this.supportsWebM && v.webm) ? v.webm : v.mp4;
+                    el.play().catch(() => {});
+                },
                 swapVideo(currentEl, nextEl) {
                     this.currentIndex = (this.currentIndex + 1) % this.videos.length;
-                    nextEl.src = this.videos[this.currentIndex];
-                    nextEl.play();
+                    this.loadVideo(nextEl, this.currentIndex);
                     this.activeVid = this.activeVid === 1 ? 2 : 1;
                 }
             }));
@@ -118,6 +127,11 @@
         .faq-item:hover .faq-q {
             color: #6E5C4F;
         }
+
+        /* ── Video Atendimento ── */
+        .video-wrapper { overflow: hidden; }
+        .video-wrapper video { cursor: pointer; display: block; }
+        .video-overlay { transition: opacity 0.4s ease; }
     </style>
     <script>
         tailwind.config = {
@@ -414,8 +428,8 @@
     <!-- 1. Hero Section (Sofisticado / Vídeo Loop) -->
     <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden" x-data="heroVideoSlider()">
         <div class="absolute inset-0 z-0 bg-deepCharcoal">
-            <video x-ref="vid1" muted playsinline class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out" :class="activeVid === 1 ? 'opacity-70' : 'opacity-0'"></video>
-            <video x-ref="vid2" muted playsinline class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out" :class="activeVid === 2 ? 'opacity-70' : 'opacity-0'"></video>
+            <video x-ref="vid1" muted playsinline preload="none" poster="assets/img/cortina-02.jpg" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out" :class="activeVid === 1 ? 'opacity-70' : 'opacity-0'"></video>
+            <video x-ref="vid2" muted playsinline preload="none" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out" :class="activeVid === 2 ? 'opacity-70' : 'opacity-0'"></video>
             <!-- Gradiente de cor areia/quente para unificar tons ao vídeo -->
             <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/90 via-deepCharcoal/40 to-transparent mix-blend-multiply"></div>
         </div>
@@ -552,15 +566,29 @@
                 </div>
                 <div class="lg:w-1/2 relative">
                     <div class="absolute -inset-4 bg-brandSand/10 md:transform md:translate-x-8 md:translate-y-8 z-0"></div>
-                    <video
-                        autoplay
-                        muted
-                        loop
-                        playsinline
-                        class="relative z-10 w-full h-auto aspect-[3/4] object-cover shadow-2xl"
-                        aria-label="Consultora Ávila apresentando tecidos e materiais no showroom em Criciúma">
-                        <source src="assets/video/atendimento.mp4" type="video/mp4">
-                    </video>
+                    <div class="video-wrapper relative z-10 shadow-2xl w-full aspect-[3/4]">
+                        <video
+                            id="atendimento-video"
+                            preload="none"
+                            playsinline
+                            class="w-full h-full object-cover"
+                            aria-label="Consultora Ávila apresentando tecidos e materiais no showroom em Criciúma">
+                            <source data-src="assets/video/atendimento.webm" type="video/webm">
+                            <source data-src="assets/video/atendimento.mp4" type="video/mp4">
+                        </video>
+                        <!-- Overlay play/pause -->
+                        <div class="video-overlay absolute inset-0 flex items-center justify-center bg-deepCharcoal/30 cursor-pointer">
+                            <button class="btn-play w-16 h-16 rounded-full bg-white/90 flex items-center justify-center hover:bg-white hover:scale-110 transition-all duration-300 shadow-xl" aria-label="Reproduzir vídeo">
+                                <svg class="icon-play w-6 h-6 text-deepCharcoal ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                <svg class="icon-pause w-6 h-6 text-deepCharcoal hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                            </button>
+                        </div>
+                        <!-- Mute/unmute (visível ao reproduzir) -->
+                        <button class="btn-mute absolute bottom-4 right-4 w-9 h-9 rounded-full bg-black/50 items-center justify-center hover:bg-black/80 transition-all duration-200 hidden" aria-label="Ativar/desativar som">
+                            <svg class="icon-sound-on w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                            <svg class="icon-sound-off w-4 h-4 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -832,6 +860,78 @@
             <p class="mt-4 md:mt-0 opacity-70">Design e Desenvolvimento: <a href="https://digitalblum.com/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-opacity underline underline-offset-2">Blum Digitale</a></p>
         </div>
     </footer>
+
+    <script>
+    (function () {
+        var wrapper = document.querySelector('.video-wrapper');
+        var videoEl = document.getElementById('atendimento-video');
+        if (!wrapper || !videoEl) return;
+
+        var overlay   = wrapper.querySelector('.video-overlay');
+        var btnPlay   = wrapper.querySelector('.btn-play');
+        var btnMute   = wrapper.querySelector('.btn-mute');
+        var iconPlay  = btnPlay.querySelector('.icon-play');
+        var iconPause = btnPlay.querySelector('.icon-pause');
+        var iconOn    = btnMute.querySelector('.icon-sound-on');
+        var iconOff   = btnMute.querySelector('.icon-sound-off');
+        var srcLoaded = false;
+
+        function loadSources() {
+            if (srcLoaded) return;
+            srcLoaded = true;
+            videoEl.querySelectorAll('source[data-src]').forEach(function (s) {
+                s.src = s.dataset.src;
+            });
+            videoEl.load();
+        }
+
+        // Lazy load: só baixa o vídeo ao entrar na viewport (+ 300px de margem)
+        if ('IntersectionObserver' in window) {
+            var io = new IntersectionObserver(function (entries) {
+                if (entries[0].isIntersecting) { loadSources(); io.unobserve(wrapper); }
+            }, { rootMargin: '300px 0px' });
+            io.observe(wrapper);
+        } else {
+            loadSources();
+        }
+
+        function setPlaying(playing) {
+            if (playing) {
+                overlay.style.opacity = '0';
+                overlay.style.pointerEvents = 'none';
+                btnMute.classList.remove('hidden');
+                btnMute.classList.add('flex');
+                iconPlay.classList.add('hidden');
+                iconPause.classList.remove('hidden');
+            } else {
+                overlay.style.opacity = '1';
+                overlay.style.pointerEvents = 'auto';
+                btnMute.classList.add('hidden');
+                btnMute.classList.remove('flex');
+                iconPlay.classList.remove('hidden');
+                iconPause.classList.add('hidden');
+            }
+        }
+
+        function togglePlay() {
+            loadSources();
+            if (videoEl.paused) { videoEl.play(); } else { videoEl.pause(); }
+        }
+
+        overlay.addEventListener('click', togglePlay);
+        btnPlay.addEventListener('click', function (e) { e.stopPropagation(); togglePlay(); });
+
+        btnMute.addEventListener('click', function () {
+            videoEl.muted = !videoEl.muted;
+            iconOn.classList.toggle('hidden',  videoEl.muted);
+            iconOff.classList.toggle('hidden', !videoEl.muted);
+        });
+
+        videoEl.addEventListener('play',  function () { setPlaying(true); });
+        videoEl.addEventListener('pause', function () { setPlaying(false); });
+        videoEl.addEventListener('ended', function () { setPlaying(false); });
+    })();
+    </script>
 
     <!-- Botão "Secret/Subtle" flutuante p/ Desktop, discreto em Luxo -->
     <a href="https://wa.me/554834372422" target="_blank" class="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 w-14 h-14 bg-deepCharcoal text-white rounded-full flex items-center justify-center shadow-2xl hover:bg-warmWood hover:scale-110 lux-transition z-50 group">
