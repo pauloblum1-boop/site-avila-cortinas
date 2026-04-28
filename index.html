@@ -102,6 +102,50 @@
         .video-wrapper { overflow: hidden; }
         .video-wrapper video { cursor: pointer; display: block; }
         .video-overlay { transition: opacity 0.4s ease; }
+
+        /* ── Gallery Video Players ── */
+        .gv-card { cursor: pointer; }
+        .gv-card video { display: block; width: 100%; height: 100%; object-fit: cover; }
+        .gv-overlay {
+            background: rgba(28,27,26,0.48);
+            transition: background-color 0.5s ease;
+            pointer-events: none;
+        }
+        .gv-card.gv-playing .gv-overlay { background: rgba(28,27,26,0.12); }
+
+        .gv-playbtn {
+            opacity: 1;
+            transition: opacity 0.35s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1), background-color 0.2s ease;
+        }
+        .gv-card.gv-playing:not(:hover) .gv-playbtn { opacity: 0; pointer-events: none; }
+        .gv-card:hover .gv-playbtn { opacity: 1; pointer-events: auto; }
+
+        .gv-label {
+            opacity: 1;
+            transition: opacity 0.35s ease;
+        }
+        .gv-card.gv-playing:not(:hover) .gv-label { opacity: 0; }
+
+        .gv-controls-bottom {
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+        .gv-card.gv-playing .gv-controls-bottom { opacity: 0.75; }
+        .gv-card:hover .gv-controls-bottom { opacity: 1; }
+        .gv-card.gv-started:not(.gv-playing) .gv-controls-bottom { opacity: 1; }
+
+        .gv-progress-track {
+            position: relative;
+            cursor: pointer;
+        }
+        .gv-progress-track::before {
+            content: '';
+            position: absolute;
+            inset: -6px 0;
+        }
+        .gv-progress-fill {
+            transition: width 0.12s linear;
+        }
     </style>
     <script>
         tailwind.config = {
@@ -585,32 +629,124 @@
                 <a href="#colecoes" class="text-xs uppercase tracking-[0.15em] border-b border-deepCharcoal pb-1 hover:text-brandSand hover:border-brandSand lux-transition whitespace-nowrap">Conhecer Produtos</a>
             </div>
 
-            <!-- Grids Assimétricos (Masonry feel) -->
+            <!-- Grids Assimétricos com Video Players -->
             <div class="gallery-grid">
-                <div class="group relative overflow-hidden bg-brandPeach/20 tall">
-                    <img src="assets/img/inspire-1.webp" alt="Sala de estar decorada com cortinas sob medida em Criciúma" class="w-full h-full object-cover group-hover:scale-105 lux-transition" loading="lazy">
-                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 lux-transition flex items-center justify-center">
-                        <span class="text-white uppercase tracking-widest text-xs border border-white px-4 py-2">Salas de Estar</span>
+
+                <!-- Card 1 — Sala de Estar (tall) -->
+                <div class="gv-card relative overflow-hidden bg-deepCharcoal tall" aria-label="Vídeo — Salas de Estar com Cortinas">
+                    <video class="absolute inset-0 w-full h-full object-cover" preload="none" playsinline muted>
+                        <source data-src="assets/video/gallery-sala.mp4" type="video/mp4">
+                    </video>
+                    <div class="gv-overlay absolute inset-0"></div>
+                    <div class="absolute inset-0 flex flex-col justify-between p-5 pointer-events-none">
+                        <!-- Topo -->
+                        <div class="flex justify-end pointer-events-auto">
+                            <span class="gv-label text-white uppercase tracking-widest text-[10px] border border-white/50 px-3 py-1.5 bg-black/20 backdrop-blur-sm">Salas de Estar</span>
+                        </div>
+                        <!-- Centro — botão play/pause -->
+                        <div class="flex items-center justify-center pointer-events-auto">
+                            <button class="gv-playbtn w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-2xl hover:bg-white hover:scale-110" aria-label="Reproduzir vídeo">
+                                <svg class="gv-icon-play w-5 h-5 text-deepCharcoal ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                <svg class="gv-icon-pause w-5 h-5 text-deepCharcoal hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                            </button>
+                        </div>
+                        <!-- Rodapé — progresso + mute -->
+                        <div class="gv-controls-bottom flex items-center gap-3 pointer-events-auto">
+                            <div class="gv-progress-track flex-1 h-[2px] bg-white/25 rounded-full">
+                                <div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div>
+                            </div>
+                            <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full flex-shrink-0" aria-label="Mudo / Com som">
+                                <svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                                <svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="group relative overflow-hidden bg-brandPeach/20 wide">
-                    <img src="assets/img/inspire-2.webp" alt="Quarto suíte com persianas sob medida e decoração de alto padrão" class="w-full h-full object-cover group-hover:scale-105 lux-transition" loading="lazy">
-                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 lux-transition flex items-center justify-center">
-                        <span class="text-white uppercase tracking-widest text-xs border border-white px-4 py-2">Quartos Suíte</span>
+
+                <!-- Card 2 — Quartos Suíte (wide) -->
+                <div class="gv-card relative overflow-hidden bg-deepCharcoal wide" aria-label="Vídeo — Quartos Suíte com Cortinas">
+                    <video class="absolute inset-0 w-full h-full object-cover" preload="none" playsinline muted>
+                        <source data-src="assets/video/gallery-quartos.mp4" type="video/mp4">
+                    </video>
+                    <div class="gv-overlay absolute inset-0"></div>
+                    <div class="absolute inset-0 flex flex-col justify-between p-5 pointer-events-none">
+                        <div class="flex justify-end pointer-events-auto">
+                            <span class="gv-label text-white uppercase tracking-widest text-[10px] border border-white/50 px-3 py-1.5 bg-black/20 backdrop-blur-sm">Quartos Suíte</span>
+                        </div>
+                        <div class="flex items-center justify-center pointer-events-auto">
+                            <button class="gv-playbtn w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-2xl hover:bg-white hover:scale-110" aria-label="Reproduzir vídeo">
+                                <svg class="gv-icon-play w-5 h-5 text-deepCharcoal ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                <svg class="gv-icon-pause w-5 h-5 text-deepCharcoal hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                            </button>
+                        </div>
+                        <div class="gv-controls-bottom flex items-center gap-3 pointer-events-auto">
+                            <div class="gv-progress-track flex-1 h-[2px] bg-white/25 rounded-full">
+                                <div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div>
+                            </div>
+                            <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full flex-shrink-0" aria-label="Mudo / Com som">
+                                <svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                                <svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="group relative overflow-hidden bg-brandPeach/20">
-                    <img src="assets/img/inspire-3.webp" alt="Ambiente corporativo com persianas e cortinas instaladas pela Ávila" class="w-full h-full object-cover group-hover:scale-105 lux-transition" loading="lazy">
-                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 lux-transition flex items-center justify-center">
-                        <span class="text-white uppercase tracking-widest text-xs border border-white px-4 py-2">Corporativo</span>
+
+                <!-- Card 3 — Piso e Papel de Parede -->
+                <div class="gv-card relative overflow-hidden bg-deepCharcoal" aria-label="Vídeo — Piso e Papel de Parede">
+                    <video class="absolute inset-0 w-full h-full object-cover" preload="none" playsinline muted>
+                        <source data-src="assets/video/gallery-piso.mp4" type="video/mp4">
+                    </video>
+                    <div class="gv-overlay absolute inset-0"></div>
+                    <div class="absolute inset-0 flex flex-col justify-between p-5 pointer-events-none">
+                        <div class="flex justify-end pointer-events-auto">
+                            <span class="gv-label text-white uppercase tracking-widest text-[10px] border border-white/50 px-3 py-1.5 bg-black/20 backdrop-blur-sm">Piso &amp; Papel de Parede</span>
+                        </div>
+                        <div class="flex items-center justify-center pointer-events-auto">
+                            <button class="gv-playbtn w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-2xl hover:bg-white hover:scale-110" aria-label="Reproduzir vídeo">
+                                <svg class="gv-icon-play w-5 h-5 text-deepCharcoal ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                <svg class="gv-icon-pause w-5 h-5 text-deepCharcoal hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                            </button>
+                        </div>
+                        <div class="gv-controls-bottom flex items-center gap-3 pointer-events-auto">
+                            <div class="gv-progress-track flex-1 h-[2px] bg-white/25 rounded-full">
+                                <div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div>
+                            </div>
+                            <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full flex-shrink-0" aria-label="Mudo / Com som">
+                                <svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                                <svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="group relative overflow-hidden bg-brandPeach/20">
-                    <img src="assets/img/inspire-4.webp" alt="Sala de jantar com cortinas elegantes e piso vinílico Ávila" class="w-full h-full object-cover group-hover:scale-105 lux-transition" loading="lazy">
-                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 lux-transition flex items-center justify-center">
-                        <span class="text-white uppercase tracking-widest text-xs border border-white px-4 py-2">Salas de Jantar</span>
+
+                <!-- Card 4 — Hyperful Piso e Papel de Parede -->
+                <div class="gv-card relative overflow-hidden bg-deepCharcoal" aria-label="Vídeo — Sala de Jantar Piso e Papel de Parede">
+                    <video class="absolute inset-0 w-full h-full object-cover" preload="none" playsinline muted>
+                        <source data-src="assets/video/gallery-hyperful.mp4" type="video/mp4">
+                    </video>
+                    <div class="gv-overlay absolute inset-0"></div>
+                    <div class="absolute inset-0 flex flex-col justify-between p-5 pointer-events-none">
+                        <div class="flex justify-end pointer-events-auto">
+                            <span class="gv-label text-white uppercase tracking-widest text-[10px] border border-white/50 px-3 py-1.5 bg-black/20 backdrop-blur-sm">Salas de Jantar</span>
+                        </div>
+                        <div class="flex items-center justify-center pointer-events-auto">
+                            <button class="gv-playbtn w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-2xl hover:bg-white hover:scale-110" aria-label="Reproduzir vídeo">
+                                <svg class="gv-icon-play w-5 h-5 text-deepCharcoal ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                <svg class="gv-icon-pause w-5 h-5 text-deepCharcoal hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                            </button>
+                        </div>
+                        <div class="gv-controls-bottom flex items-center gap-3 pointer-events-auto">
+                            <div class="gv-progress-track flex-1 h-[2px] bg-white/25 rounded-full">
+                                <div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div>
+                            </div>
+                            <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full flex-shrink-0" aria-label="Mudo / Com som">
+                                <svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                                <svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -914,6 +1050,108 @@
         videoEl.addEventListener('play',  function () { setPlaying(true); });
         videoEl.addEventListener('pause', function () { setPlaying(false); });
         videoEl.addEventListener('ended', function () { setPlaying(false); });
+    })();
+    </script>
+
+    <!-- Gallery Video Players — lazy load + play/pause + progress + mute -->
+    <script>
+    (function () {
+        var allCards = document.querySelectorAll('.gv-card');
+
+        function pauseOthers(except) {
+            allCards.forEach(function (c) {
+                if (c === except) return;
+                var v = c.querySelector('video');
+                if (v && !v.paused) v.pause();
+            });
+        }
+
+        allCards.forEach(function (card) {
+            var video    = card.querySelector('video');
+            var btnPlay  = card.querySelector('.gv-playbtn');
+            var iconPlay = btnPlay.querySelector('.gv-icon-play');
+            var iconPause= btnPlay.querySelector('.gv-icon-pause');
+            var btnMute  = card.querySelector('.gv-btn-mute');
+            var iconOn   = btnMute.querySelector('.gv-icon-on');
+            var iconOff  = btnMute.querySelector('.gv-icon-off');
+            var track    = card.querySelector('.gv-progress-track');
+            var fill     = card.querySelector('.gv-progress-fill');
+            var srcLoaded= false;
+
+            /* Lazy load: carrega o src só quando o card entra na viewport */
+            function loadSrc() {
+                if (srcLoaded) return;
+                srcLoaded = true;
+                video.querySelectorAll('source[data-src]').forEach(function (s) {
+                    s.src = s.dataset.src;
+                });
+                video.load();
+            }
+            if ('IntersectionObserver' in window) {
+                var io = new IntersectionObserver(function (entries) {
+                    if (entries[0].isIntersecting) { loadSrc(); io.unobserve(card); }
+                }, { rootMargin: '300px 0px' });
+                io.observe(card);
+            }
+
+            /* Estado visual */
+            function setPlaying(playing) {
+                if (playing) {
+                    card.classList.add('gv-playing', 'gv-started');
+                    iconPlay.classList.add('hidden');
+                    iconPause.classList.remove('hidden');
+                } else {
+                    card.classList.remove('gv-playing');
+                    iconPlay.classList.remove('hidden');
+                    iconPause.classList.add('hidden');
+                }
+            }
+
+            /* Toggle play / pause */
+            function togglePlay() {
+                loadSrc();
+                if (video.paused) {
+                    pauseOthers(card);
+                    video.play().catch(function () {});
+                } else {
+                    video.pause();
+                }
+            }
+
+            /* Clique no card (overlay ou botão) */
+            card.addEventListener('click', function (e) {
+                if (btnMute.contains(e.target)) return;
+                togglePlay();
+            });
+
+            /* Eventos do vídeo */
+            video.addEventListener('play',  function () { setPlaying(true); });
+            video.addEventListener('pause', function () { setPlaying(false); });
+            video.addEventListener('ended', function () {
+                setPlaying(false);
+                fill.style.width = '0%';
+            });
+
+            /* Barra de progresso */
+            video.addEventListener('timeupdate', function () {
+                if (video.duration) {
+                    fill.style.width = (video.currentTime / video.duration * 100) + '%';
+                }
+            });
+            track.addEventListener('click', function (e) {
+                if (!video.duration) return;
+                var rect = track.getBoundingClientRect();
+                video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
+            });
+
+            /* Mute / Unmute */
+            btnMute.addEventListener('click', function (e) {
+                e.stopPropagation();
+                video.muted = !video.muted;
+                iconOn.classList.toggle('hidden',  video.muted);
+                iconOff.classList.toggle('hidden', !video.muted);
+            });
+        });
     })();
     </script>
 
