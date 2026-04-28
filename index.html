@@ -46,13 +46,24 @@
         .lux-transition { transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            grid-auto-rows: 250px;
-            gap: 1.5rem;
+            grid-template-columns: 1fr 1.6fr 1.6fr;
+            grid-template-rows: 440px 380px;
+            gap: 1.25rem;
         }
-        @media (min-width: 768px) {
-            .gallery-grid .tall { grid-row: span 2; }
-            .gallery-grid .wide { grid-column: span 2; }
+        .gallery-grid .tall { grid-row: span 2; }
+        .gallery-grid .wide { grid-column: span 2; }
+
+        @media (max-width: 767px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: none;
+                grid-auto-rows: 320px;
+            }
+            .gallery-grid .tall,
+            .gallery-grid .wide {
+                grid-row: span 1;
+                grid-column: span 1;
+            }
         }
 
         /* ── FAQ Accordion ── */
@@ -442,15 +453,12 @@
     <!-- 1. Hero Section (Sofisticado / Vídeo Loop) -->
     <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div class="absolute inset-0 z-0 bg-deepCharcoal">
-            <video id="hero-v1" autoplay muted playsinline preload="auto" poster="assets/img/cortina-02.jpg"
+            <video id="hero-v1" autoplay muted playsinline loop preload="auto" poster="assets/img/cortina-02.jpg"
                    class="absolute inset-0 w-full h-full object-cover"
-                   style="opacity:0.7;transition:opacity 1.5s ease-in-out;">
+                   style="opacity:0.7;">
                 <source src="assets/video/hero-01.webm" type="video/webm">
                 <source src="assets/video/hero-01.mp4" type="video/mp4">
             </video>
-            <video id="hero-v2" muted playsinline preload="none"
-                   class="absolute inset-0 w-full h-full object-cover"
-                   style="opacity:0;transition:opacity 1.5s ease-in-out;"></video>
             <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/90 via-deepCharcoal/40 to-transparent mix-blend-multiply"></div>
         </div>
 
@@ -699,7 +707,7 @@
                     <div class="gv-overlay absolute inset-0"></div>
                     <div class="absolute inset-0 flex flex-col justify-between p-5 pointer-events-none">
                         <div class="flex justify-end pointer-events-auto">
-                            <span class="gv-label text-white uppercase tracking-widest text-[10px] border border-white/50 px-3 py-1.5 bg-black/20 backdrop-blur-sm">Piso &amp; Papel de Parede</span>
+                            <span class="gv-label text-white uppercase tracking-widest text-[10px] border border-white/50 px-3 py-1.5 bg-black/20 backdrop-blur-sm">Ambientes Comerciais</span>
                         </div>
                         <div class="flex items-center justify-center pointer-events-auto">
                             <button class="gv-playbtn w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-2xl hover:bg-white hover:scale-110" aria-label="Reproduzir vídeo">
@@ -727,7 +735,7 @@
                     <div class="gv-overlay absolute inset-0"></div>
                     <div class="absolute inset-0 flex flex-col justify-between p-5 pointer-events-none">
                         <div class="flex justify-end pointer-events-auto">
-                            <span class="gv-label text-white uppercase tracking-widest text-[10px] border border-white/50 px-3 py-1.5 bg-black/20 backdrop-blur-sm">Salas de Jantar</span>
+                            <span class="gv-label text-white uppercase tracking-widest text-[10px] border border-white/50 px-3 py-1.5 bg-black/20 backdrop-blur-sm">Clientes & Parceiros</span>
                         </div>
                         <div class="flex items-center justify-center pointer-events-auto">
                             <button class="gv-playbtn w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-2xl hover:bg-white hover:scale-110" aria-label="Reproduzir vídeo">
@@ -1152,37 +1160,6 @@
                 iconOff.classList.toggle('hidden', !video.muted);
             });
         });
-    })();
-    </script>
-
-    <!-- Hero Video Slider — vanilla JS, sem dependência de Alpine -->
-    <script>
-    (function () {
-        var v1 = document.getElementById('hero-v1');
-        var v2 = document.getElementById('hero-v2');
-        if (!v1 || !v2) return;
-
-        var playlist = [
-            { webm: 'assets/video/hero-01.webm', mp4: 'assets/video/hero-01.mp4' },
-            { webm: 'assets/video/hero-02.webm', mp4: 'assets/video/hero-02.mp4' },
-            { webm: 'assets/video/hero-03.webm', mp4: 'assets/video/hero-03.mp4' }
-        ];
-        var idx = 0;
-        var canWebM = v1.canPlayType('video/webm; codecs="vp9"') !== '';
-        function src(item) { return canWebM ? item.webm : item.mp4; }
-
-        function playNext(from, to) {
-            idx = (idx + 1) % playlist.length;
-            to.src = src(playlist[idx]);
-            to.load();
-            to.play().catch(function () {});
-            from.style.opacity = '0';
-            to.style.opacity = '0.7';
-            to.addEventListener('ended', function () { playNext(to, from); }, { once: true });
-        }
-
-        v1.addEventListener('ended', function () { playNext(v1, v2); }, { once: true });
-        v1.play().catch(function () {});
     })();
     </script>
 
