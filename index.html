@@ -157,6 +157,14 @@
         .gv-progress-fill {
             transition: width 0.12s linear;
         }
+
+        /* ── Carousel ── */
+        .c-vid { transition: opacity 0.55s ease; }
+        .c-prev, .c-next { transition: background-color 0.25s ease, transform 0.2s ease; }
+        .c-prev:hover, .c-next:hover { transform: scale(1.1); }
+        .c-dot { transition: background-color 0.3s ease, transform 0.3s ease; }
+        .c-dot.active { background-color: rgba(255,255,255,1); transform: scale(1.3); }
+        #gallery-carousel .gv-controls-bottom { opacity: 1; }
     </style>
     <script>
         tailwind.config = {
@@ -727,31 +735,74 @@
                     </div>
                 </div>
 
-                <!-- Card 4 — Hyperful Piso e Papel de Parede -->
-                <div class="gv-card relative overflow-hidden bg-deepCharcoal" aria-label="Vídeo — Sala de Jantar Piso e Papel de Parede">
-                    <video class="absolute inset-0 w-full h-full object-cover" preload="none" playsinline muted>
-                        <source data-src="assets/video/gallery-hyperful.mp4" type="video/mp4">
+                <!-- Card 4 — Carrossel Clientes & Parceiros (5 vídeos) -->
+                <div id="gallery-carousel" class="gv-card gv-started relative overflow-hidden bg-deepCharcoal" aria-label="Carrossel — Clientes e Parceiros">
+
+                    <!-- 5 vídeos empilhados; só o atual tem opacity:1 -->
+                    <video class="c-vid absolute inset-0 w-full h-full object-cover" style="opacity:1" preload="none" playsinline muted>
+                        <source data-src="assets/video/carousel-1.mp4" type="video/mp4">
                     </video>
+                    <video class="c-vid absolute inset-0 w-full h-full object-cover" style="opacity:0" preload="none" playsinline muted>
+                        <source data-src="assets/video/carousel-2.mp4" type="video/mp4">
+                    </video>
+                    <video class="c-vid absolute inset-0 w-full h-full object-cover" style="opacity:0" preload="none" playsinline muted>
+                        <source data-src="assets/video/carousel-3.mp4" type="video/mp4">
+                    </video>
+                    <video class="c-vid absolute inset-0 w-full h-full object-cover" style="opacity:0" preload="none" playsinline muted>
+                        <source data-src="assets/video/carousel-4.mp4" type="video/mp4">
+                    </video>
+                    <video class="c-vid absolute inset-0 w-full h-full object-cover" style="opacity:0" preload="none" playsinline muted>
+                        <source data-src="assets/video/carousel-5.mp4" type="video/mp4">
+                    </video>
+
                     <div class="gv-overlay absolute inset-0"></div>
+
                     <div class="absolute inset-0 flex flex-col justify-between p-5 pointer-events-none">
-                        <div class="flex justify-end pointer-events-auto">
-                            <span class="gv-label text-white uppercase tracking-widest text-[10px] border border-white/50 px-3 py-1.5 bg-black/20 backdrop-blur-sm">Clientes & Parceiros</span>
+
+                        <!-- Topo: setas ← → + label -->
+                        <div class="flex justify-between items-center pointer-events-auto">
+                            <div class="flex gap-2">
+                                <button class="c-prev w-8 h-8 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center text-white" aria-label="Anterior">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                                </button>
+                                <button class="c-next w-8 h-8 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center text-white" aria-label="Próximo">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                </button>
+                            </div>
+                            <span class="gv-label text-white uppercase tracking-widest text-[10px] border border-white/50 px-3 py-1.5 bg-black/20 backdrop-blur-sm">Clientes &amp; Parceiros</span>
                         </div>
+
+                        <!-- Centro: play / pause -->
                         <div class="flex items-center justify-center pointer-events-auto">
                             <button class="gv-playbtn w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-2xl hover:bg-white hover:scale-110" aria-label="Reproduzir vídeo">
                                 <svg class="gv-icon-play w-5 h-5 text-deepCharcoal ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                 <svg class="gv-icon-pause w-5 h-5 text-deepCharcoal hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                             </button>
                         </div>
-                        <div class="gv-controls-bottom flex items-center gap-3 pointer-events-auto">
-                            <div class="gv-progress-track flex-1 h-[2px] bg-white/25 rounded-full">
-                                <div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div>
+
+                        <!-- Rodapé: dots + progresso + mute -->
+                        <div class="flex flex-col gap-2.5 pointer-events-auto">
+                            <!-- Dots de navegação -->
+                            <div class="flex justify-center gap-2">
+                                <button class="c-dot active w-1.5 h-1.5 rounded-full" aria-label="Slide 1"></button>
+                                <button class="c-dot w-1.5 h-1.5 rounded-full bg-white/30" aria-label="Slide 2"></button>
+                                <button class="c-dot w-1.5 h-1.5 rounded-full bg-white/30" aria-label="Slide 3"></button>
+                                <button class="c-dot w-1.5 h-1.5 rounded-full bg-white/30" aria-label="Slide 4"></button>
+                                <button class="c-dot w-1.5 h-1.5 rounded-full bg-white/30" aria-label="Slide 5"></button>
                             </div>
-                            <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full flex-shrink-0" aria-label="Mudo / Com som">
-                                <svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-                                <svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
-                            </button>
+                            <!-- Barra de progresso + mute -->
+                            <div class="gv-controls-bottom flex items-center gap-3">
+                                <div class="gv-progress-track flex-1 h-[2px] bg-white/25 rounded-full">
+                                    <div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div>
+                                </div>
+                                <span class="c-counter text-white/40 text-[9px] tracking-widest font-light select-none flex-shrink-0">01 / 05</span>
+                                <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full flex-shrink-0" aria-label="Mudo / Com som">
+                                    <svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                                    <svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                                </button>
+                            </div>
                         </div>
+
                     </div>
                 </div>
 
@@ -1075,6 +1126,7 @@
         }
 
         allCards.forEach(function (card) {
+            if (card.id === 'gallery-carousel') return;
             var video    = card.querySelector('video');
             var btnPlay  = card.querySelector('.gv-playbtn');
             var iconPlay = btnPlay.querySelector('.gv-icon-play');
@@ -1160,6 +1212,151 @@
                 iconOff.classList.toggle('hidden', !video.muted);
             });
         });
+    })();
+    </script>
+
+    <!-- Carrossel de vídeos — Clientes & Parceiros -->
+    <script>
+    (function () {
+        var wrap    = document.getElementById('gallery-carousel');
+        if (!wrap) return;
+
+        var vids    = Array.from(wrap.querySelectorAll('.c-vid'));
+        var dots    = Array.from(wrap.querySelectorAll('.c-dot'));
+        var counter = wrap.querySelector('.c-counter');
+        var btnPrev = wrap.querySelector('.c-prev');
+        var btnNext = wrap.querySelector('.c-next');
+        var btnPlay = wrap.querySelector('.gv-playbtn');
+        var iPly    = btnPlay.querySelector('.gv-icon-play');
+        var iPau    = btnPlay.querySelector('.gv-icon-pause');
+        var btnMute = wrap.querySelector('.gv-btn-mute');
+        var iOn     = btnMute.querySelector('.gv-icon-on');
+        var iOff    = btnMute.querySelector('.gv-icon-off');
+        var track   = wrap.querySelector('.gv-progress-track');
+        var fill    = wrap.querySelector('.gv-progress-fill');
+
+        var cur     = 0;
+        var loaded  = {};
+
+        /* Lazy: carrega src do slide pelo índice */
+        function loadSlide(idx) {
+            if (loaded[idx]) return;
+            loaded[idx] = true;
+            vids[idx].querySelectorAll('source[data-src]').forEach(function (s) {
+                s.src = s.dataset.src;
+            });
+            vids[idx].load();
+        }
+
+        /* Navega para o slide idx */
+        function goTo(idx) {
+            var prev = cur;
+            vids[prev].pause();
+            vids[prev].style.opacity = '0';
+
+            cur = (idx + vids.length) % vids.length;
+            loadSlide(cur);
+            vids[cur].style.opacity = '1';
+
+            /* Atualiza dots */
+            dots.forEach(function (d, i) {
+                d.classList.toggle('active', i === cur);
+                d.style.backgroundColor = i === cur ? 'rgba(255,255,255,1)' : 'rgba(255,255,255,0.3)';
+            });
+
+            /* Atualiza contador */
+            if (counter) {
+                counter.textContent = ('0' + (cur + 1)).slice(-2) + ' / 0' + vids.length;
+            }
+
+            setPlaying(false);
+            fill.style.width = '0%';
+        }
+
+        function curVid() { return vids[cur]; }
+
+        function setPlaying(playing) {
+            if (playing) {
+                wrap.classList.add('gv-playing');
+                iPly.classList.add('hidden');
+                iPau.classList.remove('hidden');
+            } else {
+                wrap.classList.remove('gv-playing');
+                iPly.classList.remove('hidden');
+                iPau.classList.add('hidden');
+            }
+        }
+
+        function togglePlay() {
+            var v = curVid();
+            if (v.paused) {
+                /* pausa outros cards da galeria */
+                document.querySelectorAll('.gv-card:not(#gallery-carousel)').forEach(function (c) {
+                    var cv = c.querySelector('video');
+                    if (cv && !cv.paused) cv.pause();
+                });
+                v.play().catch(function () {});
+            } else {
+                v.pause();
+            }
+        }
+
+        /* Clique no card (exceto setas e mute) */
+        wrap.addEventListener('click', function (e) {
+            if (btnPrev.contains(e.target) || btnNext.contains(e.target) || btnMute.contains(e.target)) return;
+            if (dots.some(function (d) { return d.contains(e.target); })) return;
+            togglePlay();
+        });
+
+        /* Setas */
+        btnPrev.addEventListener('click', function (e) { e.stopPropagation(); goTo(cur - 1); });
+        btnNext.addEventListener('click', function (e) { e.stopPropagation(); goTo(cur + 1); });
+
+        /* Dots clicáveis */
+        dots.forEach(function (d, i) {
+            d.addEventListener('click', function (e) { e.stopPropagation(); goTo(i); });
+        });
+
+        /* Eventos do vídeo ativo */
+        vids.forEach(function (v) {
+            v.addEventListener('play',  function () { if (v === curVid()) setPlaying(true); });
+            v.addEventListener('pause', function () { if (v === curVid()) setPlaying(false); });
+            v.addEventListener('ended', function () {
+                if (v === curVid()) { setPlaying(false); fill.style.width = '0%'; }
+            });
+            v.addEventListener('timeupdate', function () {
+                if (v === curVid() && v.duration) {
+                    fill.style.width = (v.currentTime / v.duration * 100) + '%';
+                }
+            });
+        });
+
+        /* Seek na barra de progresso */
+        track.addEventListener('click', function (e) {
+            var v = curVid();
+            if (!v.duration) return;
+            var r = track.getBoundingClientRect();
+            v.currentTime = ((e.clientX - r.left) / r.width) * v.duration;
+        });
+
+        /* Mute — sincroniza todos os slides */
+        btnMute.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var muted = !curVid().muted;
+            vids.forEach(function (v) { v.muted = muted; });
+            iOn.classList.toggle('hidden', muted);
+            iOff.classList.toggle('hidden', !muted);
+        });
+
+        /* Lazy load do slide 0 ao entrar na viewport */
+        if ('IntersectionObserver' in window) {
+            var io = new IntersectionObserver(function (entries) {
+                if (entries[0].isIntersecting) { loadSlide(0); io.unobserve(wrap); }
+            }, { rootMargin: '300px 0px' });
+            io.observe(wrap);
+        } else {
+            loadSlide(0);
+        }
     })();
     </script>
 
