@@ -48,13 +48,15 @@
                 supportsWebM: false,
                 init() {
                     this.supportsWebM = document.createElement('video').canPlayType('video/webm; codecs="vp9"') !== '';
-                    this.loadVideo(this.$refs.vid1, 0);
+                    // vid1 já tem <source> no HTML e preload="auto" — só força o play
+                    this.$refs.vid1.play().catch(() => {});
                     this.$refs.vid1.addEventListener('ended', () => this.swapVideo(this.$refs.vid1, this.$refs.vid2));
                     this.$refs.vid2.addEventListener('ended', () => this.swapVideo(this.$refs.vid2, this.$refs.vid1));
                 },
                 loadVideo(el, index) {
                     const v = this.videos[index];
                     el.src = (this.supportsWebM && v.webm) ? v.webm : v.mp4;
+                    el.load();
                     el.play().catch(() => {});
                 },
                 swapVideo(currentEl, nextEl) {
@@ -428,8 +430,11 @@
     <!-- 1. Hero Section (Sofisticado / Vídeo Loop) -->
     <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden" x-data="heroVideoSlider()">
         <div class="absolute inset-0 z-0 bg-deepCharcoal">
-            <video x-ref="vid1" autoplay muted playsinline preload="none" poster="assets/img/cortina-02.jpg" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out" :class="activeVid === 1 ? 'opacity-70' : 'opacity-0'"></video>
-            <video x-ref="vid2" autoplay muted playsinline preload="none" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out" :class="activeVid === 2 ? 'opacity-70' : 'opacity-0'"></video>
+            <video x-ref="vid1" autoplay muted playsinline preload="auto" poster="assets/img/cortina-02.jpg" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out" :class="activeVid === 1 ? 'opacity-70' : 'opacity-0'">
+                <source src="assets/video/hero-01.webm" type="video/webm">
+                <source src="assets/video/hero-01.mp4" type="video/mp4">
+            </video>
+            <video x-ref="vid2" muted playsinline preload="none" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out" :class="activeVid === 2 ? 'opacity-70' : 'opacity-0'"></video>
             <!-- Gradiente de cor areia/quente para unificar tons ao vídeo -->
             <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/90 via-deepCharcoal/40 to-transparent mix-blend-multiply"></div>
         </div>
