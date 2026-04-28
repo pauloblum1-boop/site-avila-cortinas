@@ -35,38 +35,6 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('heroVideoSlider', () => ({
-                videos: [
-                    { mp4: 'assets/video/hero-01.mp4', webm: 'assets/video/hero-01.webm' },
-                    { mp4: 'assets/video/hero-02.mp4', webm: 'assets/video/hero-02.webm' },
-                    { mp4: 'assets/video/hero-03.mp4', webm: 'assets/video/hero-03.webm' }
-                ],
-                currentIndex: 0,
-                activeVid: 1,
-                supportsWebM: false,
-                init() {
-                    this.supportsWebM = document.createElement('video').canPlayType('video/webm; codecs="vp9"') !== '';
-                    // vid1 já tem <source> no HTML e preload="auto" — só força o play
-                    this.$refs.vid1.play().catch(() => {});
-                    this.$refs.vid1.addEventListener('ended', () => this.swapVideo(this.$refs.vid1, this.$refs.vid2));
-                    this.$refs.vid2.addEventListener('ended', () => this.swapVideo(this.$refs.vid2, this.$refs.vid1));
-                },
-                loadVideo(el, index) {
-                    const v = this.videos[index];
-                    el.src = (this.supportsWebM && v.webm) ? v.webm : v.mp4;
-                    el.load();
-                    el.play().catch(() => {});
-                },
-                swapVideo(currentEl, nextEl) {
-                    this.currentIndex = (this.currentIndex + 1) % this.videos.length;
-                    this.loadVideo(nextEl, this.currentIndex);
-                    this.activeVid = this.activeVid === 1 ? 2 : 1;
-                }
-            }));
-        });
-    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -428,14 +396,17 @@
     </header>
 
     <!-- 1. Hero Section (Sofisticado / Vídeo Loop) -->
-    <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden" x-data="heroVideoSlider()">
+    <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div class="absolute inset-0 z-0 bg-deepCharcoal">
-            <video x-ref="vid1" autoplay muted playsinline preload="auto" poster="assets/img/cortina-02.jpg" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out" :class="activeVid === 1 ? 'opacity-70' : 'opacity-0'">
+            <video id="hero-v1" autoplay muted playsinline preload="auto" poster="assets/img/cortina-02.jpg"
+                   class="absolute inset-0 w-full h-full object-cover"
+                   style="opacity:0.7;transition:opacity 1.5s ease-in-out;">
                 <source src="assets/video/hero-01.webm" type="video/webm">
                 <source src="assets/video/hero-01.mp4" type="video/mp4">
             </video>
-            <video x-ref="vid2" muted playsinline preload="none" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out" :class="activeVid === 2 ? 'opacity-70' : 'opacity-0'"></video>
-            <!-- Gradiente de cor areia/quente para unificar tons ao vídeo -->
+            <video id="hero-v2" muted playsinline preload="none"
+                   class="absolute inset-0 w-full h-full object-cover"
+                   style="opacity:0;transition:opacity 1.5s ease-in-out;"></video>
             <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/90 via-deepCharcoal/40 to-transparent mix-blend-multiply"></div>
         </div>
 
@@ -943,6 +914,37 @@
         videoEl.addEventListener('play',  function () { setPlaying(true); });
         videoEl.addEventListener('pause', function () { setPlaying(false); });
         videoEl.addEventListener('ended', function () { setPlaying(false); });
+    })();
+    </script>
+
+    <!-- Hero Video Slider — vanilla JS, sem dependência de Alpine -->
+    <script>
+    (function () {
+        var v1 = document.getElementById('hero-v1');
+        var v2 = document.getElementById('hero-v2');
+        if (!v1 || !v2) return;
+
+        var playlist = [
+            { webm: 'assets/video/hero-01.webm', mp4: 'assets/video/hero-01.mp4' },
+            { webm: 'assets/video/hero-02.webm', mp4: 'assets/video/hero-02.mp4' },
+            { webm: 'assets/video/hero-03.webm', mp4: 'assets/video/hero-03.mp4' }
+        ];
+        var idx = 0;
+        var canWebM = v1.canPlayType('video/webm; codecs="vp9"') !== '';
+        function src(item) { return canWebM ? item.webm : item.mp4; }
+
+        function playNext(from, to) {
+            idx = (idx + 1) % playlist.length;
+            to.src = src(playlist[idx]);
+            to.load();
+            to.play().catch(function () {});
+            from.style.opacity = '0';
+            to.style.opacity = '0.7';
+            to.addEventListener('ended', function () { playNext(to, from); }, { once: true });
+        }
+
+        v1.addEventListener('ended', function () { playNext(v1, v2); }, { once: true });
+        v1.play().catch(function () {});
     })();
     </script>
 
