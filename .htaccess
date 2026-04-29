@@ -78,3 +78,11 @@ ErrorDocument 404 /index.html
     Header unset ETag
     FileETag None
 </IfModule>
+
+# Bypass LiteSpeed Cache (Hostinger)
+<IfModule LiteSpeed>
+    CacheDisable public /
+</IfModule>
+<IfModule litespeed>
+    CacheDisable public /
+</IfModule>
