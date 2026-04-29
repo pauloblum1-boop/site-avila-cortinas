@@ -414,12 +414,12 @@
     <!-- Header (Minimalista e Elegante) -->
     <header x-data="{ mobileMenuOpen: false, scrolled: false }" 
             @scroll.window="scrolled = (window.pageYOffset > 50)"
-            :class="scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-0' : 'bg-transparent py-0'"
-            class="fixed w-full z-50 transition-all duration-500 border-b border-transparent"
+            :class="scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm' : 'bg-transparent'"
+            class="fixed w-full z-50 h-16 transition-all duration-500 border-b border-transparent"
             :style="scrolled ? 'border-color: rgba(0,0,0,0.05)' : ''">
-        <div class="max-w-7xl mx-auto px-6 lg:px-12 flex justify-between items-center">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 h-full flex justify-between items-center">
             <a href="#hero" class="relative z-50 flex items-center -my-2 md:-my-3">
-                <img src="assets/img/logo.png" alt="Ávila Cortinas e Persianas" class="w-[145px] md:w-[187px] h-auto object-contain drop-shadow-md lux-transition" :class="scrolled ? 'opacity-100' : 'opacity-90 contrast-125 brightness-150'">
+                <img src="assets/img/logo.png" alt="Ávila Cortinas e Persianas" class="h-10 w-auto max-w-[130px] object-contain drop-shadow-md lux-transition" :class="scrolled ? 'opacity-100' : 'opacity-90 contrast-125 brightness-150'">
             </a>
             
             <nav class="hidden md:flex space-x-10 text-[13px] uppercase tracking-[0.15em] font-medium items-center transition-colors duration-500" :class="scrolled ? 'text-deepCharcoal' : 'text-white'">
