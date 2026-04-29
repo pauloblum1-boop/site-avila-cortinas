@@ -82,6 +82,10 @@
         ::-webkit-scrollbar-thumb { background: #2F3192; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #1A1B34; }
         ::selection { background: #EC1C24; color: #FFFFFF; }
+
+        /* Logo do header */
+        #header-logo { height: 72px !important; width: auto !important; }
+        @media (max-width: 767px) { #header-logo { height: 56px !important; } }
     </style>
 </head>
 
@@ -92,13 +96,13 @@
     ══════════════════════════════════ -->
     <header x-data="{ mobileMenuOpen: false, scrolled: false }"
             @scroll.window="scrolled = (window.pageYOffset > 50)"
-            :class="scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'"
-            class="fixed w-full z-50 transition-all duration-500 border-b border-transparent"
+            :class="scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm' : 'bg-transparent'"
+            class="fixed w-full z-50 h-16 transition-all duration-500 border-b border-transparent"
             :style="scrolled ? 'border-color: rgba(0,0,0,0.05)' : ''">
-        <div class="max-w-7xl mx-auto px-6 lg:px-12 flex justify-between items-center">
-            <a href="index.html" class="relative z-50 flex items-center">
-                <img src="assets/img/logo.png" alt="Ávila Cortinas e Persianas"
-                     class="w-36 md:w-48 h-auto object-contain drop-shadow-md lux-transition"
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 h-full flex justify-between items-center">
+            <a href="index.html" class="relative z-50 flex items-center -my-4 md:-my-6">
+                <img id="header-logo" src="assets/img/logo.png" alt="Ávila Cortinas e Persianas"
+                     class="w-auto object-contain drop-shadow-md lux-transition"
                      :class="scrolled ? 'opacity-100' : 'opacity-90 contrast-125 brightness-150'">
             </a>
 
