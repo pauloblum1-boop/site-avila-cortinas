@@ -414,24 +414,24 @@
     <!-- Header (Minimalista e Elegante) -->
     <header x-data="{ mobileMenuOpen: false, scrolled: false }" 
             @scroll.window="scrolled = (window.pageYOffset > 50)"
-            :class="scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-5'"
+            :class="scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-0' : 'bg-transparent py-0'"
             class="fixed w-full z-50 transition-all duration-500 border-b border-transparent"
             :style="scrolled ? 'border-color: rgba(0,0,0,0.05)' : ''">
         <div class="max-w-7xl mx-auto px-6 lg:px-12 flex justify-between items-center">
-            <a href="#hero" class="relative z-50 flex items-center">
-                <img src="assets/img/logo.png" alt="Ávila Cortinas e Persianas" class="w-28 md:w-36 h-auto object-contain drop-shadow-md lux-transition" :class="scrolled ? 'opacity-100' : 'opacity-90 contrast-125 brightness-150'">
+            <a href="#hero" class="relative z-50 flex items-center -my-2 md:-my-3">
+                <img src="assets/img/logo.png" alt="Ávila Cortinas e Persianas" class="w-[145px] md:w-[187px] h-auto object-contain drop-shadow-md lux-transition" :class="scrolled ? 'opacity-100' : 'opacity-90 contrast-125 brightness-150'">
             </a>
             
             <nav class="hidden md:flex space-x-10 text-[13px] uppercase tracking-[0.15em] font-medium items-center transition-colors duration-500" :class="scrolled ? 'text-deepCharcoal' : 'text-white'">
                 <a href="#colecoes" class="hover:text-brandSand transition duration-300">Coleções</a>
-                <a href="#inspiracao" class="hover:text-brandSand transition duration-300">Inspiração</a>
                 <a href="#processo" class="hover:text-brandSand transition duration-300">Atendimento</a>
+                <a href="#inspiracao" class="hover:text-brandSand transition duration-300">Inspiração</a>
                 <a href="#showroom" class="hover:text-brandSand transition duration-300">Showroom</a>
                 <a href="tour-virtual.html" class="flex items-center gap-1.5 hover:text-brandSand transition duration-300">
                     <svg class="w-3.5 h-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
                     Tour Virtual
                 </a>
-                <a href="https://wa.me/554834372422" target="_blank" class="px-6 py-3 border transition duration-500" :class="scrolled ? 'border-deepCharcoal hover:bg-deepCharcoal hover:text-white' : 'border-white hover:bg-white hover:text-deepCharcoal'">Solicitar Orçamento</a>
+                <a href="https://wa.me/554834372422" target="_blank" class="px-5 py-2 border transition duration-500" :class="scrolled ? 'border-deepCharcoal hover:bg-deepCharcoal hover:text-white' : 'border-white hover:bg-white hover:text-deepCharcoal'">Solicitar Orçamento</a>
             </nav>
 
             <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden relative z-50 p-2 focus:outline-none transition-colors duration-500" :class="scrolled ? 'text-deepCharcoal' : 'text-white'">
@@ -446,8 +446,8 @@
         <div x-show="mobileMenuOpen" x-transition.opacity.duration.500ms class="fixed inset-0 bg-brandIce z-40 flex flex-col justify-center items-center h-screen" style="display: none;">
             <div class="flex flex-col items-center space-y-8 text-lg font-light tracking-[0.2em] uppercase">
                 <a @click="mobileMenuOpen = false" href="#colecoes" class="hover:text-brandSand">Coleções</a>
-                <a @click="mobileMenuOpen = false" href="#inspiracao" class="hover:text-brandSand">Inspiração</a>
                 <a @click="mobileMenuOpen = false" href="#processo" class="hover:text-brandSand">Atendimento</a>
+                <a @click="mobileMenuOpen = false" href="#inspiracao" class="hover:text-brandSand">Inspiração</a>
                 <a @click="mobileMenuOpen = false" href="#showroom" class="hover:text-brandSand">Showroom</a>
                 <a @click="mobileMenuOpen = false" href="tour-virtual.html" class="flex items-center gap-2 hover:text-brandSand">
                     <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
@@ -996,40 +996,43 @@
         </div>
     </section>
 
-    <!-- 7. Footer (Pastel Alongado) -->
-    <footer class="bg-[#F2EAE5] text-deepCharcoal py-24 md:py-32 border-t border-brandSand/20 relative">
-        <!-- Detalhe arquitetônico minimalista no topo -->
+    <!-- 7. Footer -->
+    <footer class="bg-[#F2EAE5] text-deepCharcoal py-16 md:py-20 border-t border-brandSand/20 relative">
         <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-warmWood/30 mt-2"></div>
-        <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-12">
-            <div>
-                <a href="#hero" class="inline-block mb-10">
-                    <img src="assets/img/logo.png" alt="Ávila Cortinas e Persianas" class="w-40 md:w-56 h-auto object-contain drop-shadow-sm lux-transition">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16 items-start">
+
+            <!-- Col 1 — Logo + Descrição -->
+            <div class="flex flex-col gap-5">
+                <a href="#hero" class="inline-block">
+                    <img src="assets/img/logo.png" alt="Ávila Cortinas e Persianas" class="w-32 md:w-40 h-auto object-contain drop-shadow-sm lux-transition">
                 </a>
-                <p class="font-light text-sm opacity-60 leading-relaxed max-w-sm">Curadoria e sofisticação em cortinas, persianas e soluções decorativas para quem valoriza a excelência do design de interiores.</p>
+                <p class="font-light text-sm opacity-60 leading-relaxed">Curadoria e sofisticação em cortinas, persianas e soluções decorativas para quem valoriza a excelência do design de interiores.</p>
             </div>
+
+            <!-- Col 2 — Páginas -->
             <div class="md:text-center">
-                <h3 class="font-serif text-lg tracking-widest mb-6">Páginas</h3>
-                <ul class="space-y-4 font-light text-sm opacity-80 uppercase tracking-widest">
+                <h3 class="font-serif text-base tracking-widest mb-5 text-warmWood">Páginas</h3>
+                <ul class="space-y-3 font-light text-sm opacity-80 uppercase tracking-widest">
                     <li><a href="#colecoes" class="hover:text-brandSand lux-transition">Coleções</a></li>
                     <li><a href="#inspiracao" class="hover:text-brandSand lux-transition">Inspirar-se</a></li>
                     <li><a href="#processo" class="hover:text-brandSand lux-transition">Atendimento</a></li>
                     <li><a href="#faq" class="hover:text-brandSand lux-transition">FAQ</a></li>
                 </ul>
             </div>
+
+            <!-- Col 3 — Sociais + Contato -->
             <div class="md:text-right">
-                <h3 class="font-serif text-lg tracking-widest mb-6">Sociais</h3>
-                <div class="flex md:justify-end gap-6 mb-6">
-                    <a href="https://www.instagram.com/cortinasavila/" class="opacity-80 hover:text-brandSand hover:opacity-100 lux-transition">
-                        Instagram
-                    </a>
-                    <a href="https://www.facebook.com/avilacortinaspersianas" class="opacity-80 hover:text-brandSand hover:opacity-100 lux-transition">
-                        Facebook
-                    </a>
+                <h3 class="font-serif text-base tracking-widest mb-5 text-warmWood">Contato</h3>
+                <div class="flex md:justify-end gap-6 mb-4">
+                    <a href="https://www.instagram.com/cortinasavila/" target="_blank" class="text-sm opacity-80 hover:text-brandSand hover:opacity-100 lux-transition">Instagram</a>
+                    <a href="https://www.facebook.com/avilacortinaspersianas" target="_blank" class="text-sm opacity-80 hover:text-brandSand hover:opacity-100 lux-transition">Facebook</a>
                 </div>
-                <p class="font-light text-sm opacity-60 uppercase tracking-widest">(48) 3437-2422</p>
+                <a href="https://wa.me/554834372422" target="_blank" class="font-light text-sm opacity-60 uppercase tracking-widest hover:text-brandSand hover:opacity-100 lux-transition block mb-1">(48) 3437-2422</a>
+                <p class="font-light text-xs opacity-40 tracking-wider">Criciúma / SC</p>
             </div>
+
         </div>
-        <div class="max-w-7xl mx-auto px-6 lg:px-12 mt-20 pt-10 border-t border-warmWood/10 flex flex-col md:flex-row justify-between items-center text-[10px] md:text-xs opacity-60 font-light tracking-widest uppercase">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 mt-12 pt-8 border-t border-warmWood/10 flex flex-col md:flex-row justify-between items-center text-[10px] md:text-xs opacity-60 font-light tracking-widest uppercase">
             <p>&copy; 2026 Ávila Cortinas de Alto Padrão.</p>
             <p class="mt-4 md:mt-0 opacity-70">Design e Desenvolvimento: <a href="https://digitalblum.com/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-opacity underline underline-offset-2">Blum Digital</a></p>
         </div>
