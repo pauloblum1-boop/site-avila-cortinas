@@ -120,6 +120,7 @@
                     </svg>
                     Tour Virtual
                 </a>
+                <a href="index.html#faq" class="hover:text-brandSand transition duration-300">FAQ</a>
                 <a href="https://wa.me/554834372422" target="_blank"
                    class="px-6 py-3 border transition duration-500"
                    :class="scrolled ? 'border-deepCharcoal hover:bg-deepCharcoal hover:text-white' : 'border-white hover:bg-white hover:text-deepCharcoal'">
@@ -154,6 +155,7 @@
                     </svg>
                     Tour Virtual
                 </a>
+                <a @click="mobileMenuOpen = false" href="index.html#faq" class="hover:text-brandSand">FAQ</a>
                 <a @click="mobileMenuOpen = false" href="https://wa.me/554834372422"
                    class="mt-8 border-b-2 border-brandSand pb-1 text-warmWood">
                     Falar no WhatsApp
@@ -322,19 +324,45 @@
         </div>
     </section>
 
-    <!-- ══════════════════════════════════
-         FOOTER — compacto
-    ══════════════════════════════════ -->
-    <footer class="bg-[#0F0E0E] text-white/40 py-10 border-t border-white/5">
-        <div class="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] uppercase tracking-[0.2em] font-light">
-            <a href="index.html">
-                <img src="assets/img/logo.png" alt="Ávila" class="w-28 h-auto object-contain opacity-40 hover:opacity-70 lux-transition">
-            </a>
-            <p>&copy; 2026 Ávila Cortinas de Alto Padrão — Criciúma/SC</p>
-            <div class="flex gap-6">
-                <a href="https://www.instagram.com/cortinasavila/" class="hover:text-brandSand lux-transition">Instagram</a>
-                <a href="https://wa.me/554834372422" class="hover:text-brandSand lux-transition">WhatsApp</a>
+    <!-- 9. Footer -->
+    <footer class="bg-[#F2EAE5] text-deepCharcoal py-16 md:py-20 border-t border-brandSand/20 relative">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-warmWood/30 mt-2"></div>
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16 items-start">
+
+            <!-- Col 1 — Logo + Descrição -->
+            <div class="flex flex-col gap-5 items-center md:items-start text-center md:text-left">
+                <a href="index.html#hero" class="inline-block">
+                    <img src="assets/img/logo.png" alt="Ávila Cortinas e Persianas" class="w-32 md:w-40 h-auto object-contain drop-shadow-sm lux-transition">
+                </a>
+                <p class="font-light text-sm opacity-60 leading-relaxed">Curadoria e sofisticação em cortinas, persianas e soluções decorativas para quem valoriza a excelência do design de interiores.</p>
             </div>
+
+            <!-- Col 2 — Páginas -->
+            <div class="text-center">
+                <h3 class="font-serif text-base tracking-widest mb-5 text-warmWood">Páginas</h3>
+                <ul class="space-y-3 font-light text-sm opacity-80 uppercase tracking-widest">
+                    <li><a href="index.html#colecoes" class="hover:text-brandSand lux-transition">Coleções</a></li>
+                    <li><a href="index.html#inspiracao" class="hover:text-brandSand lux-transition">Inspirar-se</a></li>
+                    <li><a href="index.html#processo" class="hover:text-brandSand lux-transition">Atendimento</a></li>
+                    <li><a href="index.html#faq" class="hover:text-brandSand lux-transition">FAQ</a></li>
+                </ul>
+            </div>
+
+            <!-- Col 3 — Sociais + Contato -->
+            <div class="text-center md:text-right">
+                <h3 class="font-serif text-base tracking-widest mb-5 text-warmWood">Contato</h3>
+                <div class="flex justify-center md:justify-end gap-6 mb-4">
+                    <a href="https://www.instagram.com/cortinasavila/" target="_blank" class="text-sm opacity-80 hover:text-brandSand hover:opacity-100 lux-transition">Instagram</a>
+                    <a href="https://www.facebook.com/avilacortinaspersianas" target="_blank" class="text-sm opacity-80 hover:text-brandSand hover:opacity-100 lux-transition">Facebook</a>
+                </div>
+                <a href="https://wa.me/554834372422" target="_blank" class="font-light text-sm opacity-60 uppercase tracking-widest hover:text-brandSand hover:opacity-100 lux-transition block mb-1">(48) 3437-2422</a>
+                <p class="font-light text-xs opacity-40 tracking-wider">Criciúma / SC</p>
+            </div>
+
+        </div>
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 mt-12 pt-8 border-t border-warmWood/10 flex flex-col md:flex-row justify-between items-center text-center md:text-left text-[10px] md:text-xs opacity-60 font-light tracking-widest uppercase">
+            <p>&copy; 2026 Ávila Cortinas de Alto Padrão.</p>
+            <p class="mt-4 md:mt-0 opacity-70">Design e Desenvolvimento: <a href="https://digitalblum.com/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-opacity underline underline-offset-2">Blum Digital</a></p>
         </div>
     </footer>
 

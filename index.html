@@ -44,25 +44,42 @@
         body { font-family: 'Poppins', sans-serif; }
         h1, h2, h3, h4, .font-serif { font-family: 'Cinzel', serif; }
         .lux-transition { transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: 430px 370px;
-            gap: 1.25rem;
+        /* ── Gallery Slider ── */
+        .gs-slide {
+            position: absolute; inset: 0;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.75s ease;
         }
-        .gallery-grid .tall { grid-row: span 2; }
-        .gallery-grid .wide { grid-column: span 2; }
+        .gs-wrapper {
+            aspect-ratio: 3 / 2;
+            min-height: 520px;
+            max-height: 88vh;
+        }
+        .gs-slide video {
+            object-fit: contain;
+            object-position: center;
+            image-rendering: auto;
+            transform: translateZ(0);
+            filter: contrast(1.03) saturate(1.04);
+        }
+        .gs-slide.gs-active { opacity: 1; pointer-events: auto; }
+        .gs-grad {
+            background: linear-gradient(to top,
+                rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.12) 48%, transparent 100%);
+        }
+        .gs-dot { transition: all 0.4s ease; }
+        .gs-dot.gs-dot-active { width: 1rem; background: rgba(255,255,255,0.95); }
+        .gs-arrow-prev:disabled, .gs-arrow-next:disabled { opacity: 0.18; pointer-events: none; }
+
+        /* Esconde botão central enquanto vídeo toca; reexibe só durante interação */
+        .gs-slide.gv-playing .gv-playbtn { opacity: 0; pointer-events: none; transform: scale(0.96); }
+        .gs-slide.gv-playing.gv-user-active .gv-playbtn { opacity: 1; pointer-events: auto; transform: scale(1); }
 
         @media (max-width: 767px) {
-            .gallery-grid {
-                grid-template-columns: 1fr;
-                grid-template-rows: none;
-                grid-auto-rows: 320px;
-            }
-            .gallery-grid .tall,
-            .gallery-grid .wide {
-                grid-row: span 1;
-                grid-column: span 1;
+            .gs-wrapper {
+                aspect-ratio: 9 / 14;
+                min-height: min(620px, 78vh);
+                max-height: 78vh;
             }
         }
 
@@ -114,28 +131,78 @@
         .video-wrapper video { cursor: pointer; display: block; }
         .video-overlay { transition: opacity 0.4s ease; }
 
-        /* ── Gallery Video Players ── */
+        /* ── Gallery Video Players — Premium ── */
         .gv-card { cursor: pointer; }
-        .gv-card video { display: block; width: 100%; height: 100%; object-fit: cover; }
+        .gv-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1px solid rgba(232, 216, 169, 0);
+            transition: border-color 0.6s ease;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .gv-card:hover::after { border-color: rgba(232, 216, 169, 0.22); }
+        .gv-card video {
+            display: block; width: 100%; height: 100%; object-fit: cover;
+            transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .gv-card:hover video,
+        .gv-card.gv-playing video { transform: scale(1.05); }
+
         .gv-overlay {
-            background: rgba(28,27,26,0.48);
-            transition: background-color 0.5s ease;
+            background: linear-gradient(180deg,
+                rgba(14,13,12,0.18) 0%,
+                rgba(14,13,12,0) 38%,
+                rgba(14,13,12,0.88) 100%);
+            transition: background 0.6s ease;
             pointer-events: none;
         }
-        .gv-card.gv-playing .gv-overlay { background: rgba(28,27,26,0.12); }
+        .gv-card.gv-playing .gv-overlay {
+            background: linear-gradient(180deg,
+                rgba(14,13,12,0) 0%,
+                rgba(14,13,12,0) 52%,
+                rgba(14,13,12,0.72) 100%);
+        }
 
         .gv-playbtn {
-            opacity: 1;
-            transition: opacity 0.35s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1), background-color 0.2s ease;
+            width: 62px; height: 62px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16,1,0.3,1),
+                        background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .gv-playbtn:hover {
+            background: rgba(232,216,169,0.14);
+            border-color: rgba(232,216,169,0.85);
+            transform: scale(1.1);
         }
         .gv-card.gv-playing:not(:hover) .gv-playbtn { opacity: 0; pointer-events: none; }
         .gv-card:hover .gv-playbtn { opacity: 1; pointer-events: auto; }
 
         .gv-label {
-            opacity: 1;
+            display: flex; align-items: center; gap: 10px;
+            font-size: 9px; letter-spacing: 0.2em; font-weight: 400;
+            color: rgba(255,255,255,0.85); text-transform: uppercase;
             transition: opacity 0.35s ease;
         }
-        .gv-card.gv-playing:not(:hover) .gv-label { opacity: 0; }
+        .gv-label::before {
+            content: ''; display: block; width: 18px; height: 1px;
+            background: #E8D8A9; flex-shrink: 0; opacity: 0.75;
+        }
+        .gv-card.gv-playing:not(:hover) .gv-label { opacity: 0.55; }
+
+        .gv-info-panel {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 52px 22px 20px;
+            background: linear-gradient(0deg, rgba(14,13,12,0.92) 0%, transparent 100%);
+            display: flex; flex-direction: column; gap: 14px;
+            z-index: 4;
+        }
 
         .gv-controls-bottom {
             opacity: 0;
@@ -159,12 +226,28 @@
         }
 
         /* ── Carousel ── */
-        .c-vid { transition: opacity 0.55s ease; }
-        .c-prev, .c-next { transition: background-color 0.25s ease, transform 0.2s ease; }
-        .c-prev:hover, .c-next:hover { transform: scale(1.1); }
+        .c-vid { transition: opacity 0.6s ease; }
+        .c-prev, .c-next {
+            transition: background-color 0.25s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1);
+        }
+        .c-prev:hover, .c-next:hover { background: rgba(255,255,255,0.22) !important; transform: scale(1.1); }
         .c-dot { transition: background-color 0.3s ease, transform 0.3s ease; }
         .c-dot.active { background-color: rgba(255,255,255,1); transform: scale(1.3); }
         #gallery-carousel .gv-controls-bottom { opacity: 1; }
+
+        /* ── Gallery Entrance Animation ── */
+        .gv-reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .gv-reveal.in-view { opacity: 1; transform: translateY(0); }
+        .gallery-grid > :nth-child(2).gv-reveal { transition-delay: 0.1s; }
+        .gallery-grid > :nth-child(3).gv-reveal { transition-delay: 0.2s; }
+        .gallery-grid > :nth-child(4).gv-reveal { transition-delay: 0.3s; }
+
+        .gp-prev:disabled, .gp-next:disabled { opacity: 0.2; pointer-events: none; }
 
         /* Logo do header */
         #header-logo { height: 113px !important; width: auto !important; }
@@ -435,6 +518,7 @@
                     <svg class="w-3.5 h-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
                     Tour Virtual
                 </a>
+                <a href="#faq" class="hover:text-brandSand transition duration-300">FAQ</a>
                 <a href="https://wa.me/554834372422" target="_blank" class="px-5 py-2 border transition duration-500" :class="scrolled ? 'border-deepCharcoal hover:bg-deepCharcoal hover:text-white' : 'border-white hover:bg-white hover:text-deepCharcoal'">Solicitar Orçamento</a>
             </nav>
 
@@ -454,9 +538,11 @@
                 <a @click="mobileMenuOpen = false" href="#inspiracao" class="hover:text-brandSand">Inspiração</a>
                 <a @click="mobileMenuOpen = false" href="#showroom" class="hover:text-brandSand">Showroom</a>
                 <a @click="mobileMenuOpen = false" href="tour-virtual.html" class="flex items-center gap-2 hover:text-brandSand">
-                    <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+                    
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
                     Tour Virtual
                 </a>
+                <a @click="mobileMenuOpen = false" href="#faq" class="hover:text-brandSand">FAQ</a>
                 <a @click="mobileMenuOpen = false" href="https://wa.me/554834372422" class="mt-8 border-b-2 border-brandSand pb-1 text-warmWood">Falar no WhatsApp</a>
             </div>
         </div>
@@ -498,62 +584,137 @@
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-20">
                 <p class="uppercase tracking-[0.2em] text-brandBlue text-xs font-semibold mb-4">Nossas Especialidades</p>
-                <h2 class="text-3xl md:text-5xl font-serif text-deepCharcoal">Escolha Sua Solução</h2>
+                <h2 class="text-3xl md:text-5xl font-serif text-deepCharcoal">Explore Nossas Soluções</h2>
                 <div class="w-12 h-[1px] bg-brandBlue/40 mx-auto mt-8"></div>
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Categoria 1 -->
-                <a href="https://wa.me/554834372422?text=Ol%C3%A1%21%20Eu%20gostaria%20de%20um%20or%C3%A7amento%20para%20Cortinas." target="_blank" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Categoria 1 — Cortinas -->
+                <a href="catalogo/cortinas.html" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
                     <img src="assets/img/cortina-02.jpg" alt="Cortinas sob medida em tecido elegante instaladas em sala de estar — Ávila Criciúma" class="absolute inset-0 w-full h-full object-cover object-center opacity-90 group-hover:scale-105 group-hover:opacity-100 lux-transition" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/80 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 p-8 w-full text-white transform group-hover:-translate-y-2 lux-transition">
                         <h3 class="text-2xl font-serif mb-2">Cortinas</h3>
                         <p class="font-light text-sm opacity-0 group-hover:opacity-100 overflow-hidden max-h-0 group-hover:max-h-20 lux-transition text-brandPeach">Sob medida para vestir seu ambiente com fluidez e requinte.</p>
                         <div class="mt-4 flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-brandSand group-hover:text-white">
-                            Orçar Agora <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                            Ver Catálogo 
+<svg class="w-4 h-4 group-hover:translate-x-1 lux-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                         </div>
                     </div>
                 </a>
 
-                <!-- Categoria 2 -->
-                <a href="https://wa.me/554834372422?text=Ol%C3%A1%21%20Eu%20gostaria%20de%20um%20or%C3%A7amento%20para%20Persianas." target="_blank" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
+                <!-- Categoria 2 — Persianas -->
+                <a href="catalogo/persianas.html" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
                     <img src="assets/img/servico-persianas.jpg" alt="Persianas sob medida com controle preciso de luz — Ávila Cortinas Criciúma" class="absolute inset-0 w-full h-full object-cover object-center opacity-90 group-hover:scale-105 group-hover:opacity-100 lux-transition" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/80 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 p-8 w-full text-white transform group-hover:-translate-y-2 lux-transition">
                         <h3 class="text-2xl font-serif mb-2">Persianas</h3>
                         <p class="font-light text-sm opacity-0 group-hover:opacity-100 overflow-hidden max-h-0 group-hover:max-h-20 lux-transition text-brandPeach">Controle exato de luz com design contemporâneo.</p>
                         <div class="mt-4 flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-brandSand group-hover:text-white">
-                            Orçar Agora <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                            Ver Catálogo 
+<svg class="w-4 h-4 group-hover:translate-x-1 lux-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                         </div>
                     </div>
                 </a>
 
-                <!-- Categoria 3 -->
-                <a href="https://wa.me/554834372422?text=Ol%C3%A1%21%20Eu%20gostaria%20de%20um%20or%C3%A7amento%20para%20Papel%20de%20Parede." target="_blank" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
+                <!-- Categoria 3 — Papel de Parede -->
+                <a href="catalogo/papel-de-parede.html" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
                     <img src="assets/img/servico-papel.jpg" alt="Papel de parede de alto padrão aplicado em ambiente decorado — Ávila Criciúma" class="absolute inset-0 w-full h-full object-cover object-top opacity-90 group-hover:scale-105 group-hover:opacity-100 lux-transition" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/80 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 p-8 w-full text-white transform group-hover:-translate-y-2 lux-transition">
                         <h3 class="text-2xl font-serif mb-2">Papel de Parede</h3>
                         <p class="font-light text-sm opacity-0 group-hover:opacity-100 overflow-hidden max-h-0 group-hover:max-h-20 lux-transition text-brandPeach">Texturas inovadoras e estampas para destacar paredes.</p>
                         <div class="mt-4 flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-brandSand group-hover:text-white">
-                            Orçar Agora <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                            Ver Catálogo 
+<svg class="w-4 h-4 group-hover:translate-x-1 lux-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                         </div>
                     </div>
                 </a>
 
-                <!-- Categoria 4 -->
-                <a href="https://wa.me/554834372422?text=Ol%C3%A1%21%20Eu%20gostaria%20de%20um%20or%C3%A7amento%20para%20Piso%20Vin%C3%ADlico." target="_blank" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
+                <!-- Categoria 4 — Pisos Vinílicos -->
+                <a href="catalogo/pisos-vinilicos.html" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
                     <img src="assets/img/servico-piso.jpg" alt="Piso vinílico laminado instalado profissionalmente em residência em Criciúma" class="absolute inset-0 w-full h-full object-cover object-top opacity-90 group-hover:scale-105 group-hover:opacity-100 lux-transition" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/80 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 p-8 w-full text-white transform group-hover:-translate-y-2 lux-transition">
                         <h3 class="text-2xl font-serif mb-2">Pisos Vinílicos</h3>
                         <p class="font-light text-sm opacity-0 group-hover:opacity-100 overflow-hidden max-h-0 group-hover:max-h-20 lux-transition text-brandPeach">Conforto térmico impecável e apelo da madeira.</p>
                         <div class="mt-4 flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-brandSand group-hover:text-white">
-                            Orçar Agora <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                            Ver Catálogo 
+<svg class="w-4 h-4 group-hover:translate-x-1 lux-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                         </div>
                     </div>
                 </a>
+
+                <!-- Categoria 5 — Rodapés -->
+                <a href="catalogo/rodapes.html" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
+                    <img src="assets/img/rodapes.jpg" alt="Rodapés sob medida em Criciúma — Ávila Cortinas e Persianas" class="absolute inset-0 w-full h-full object-cover lux-transition group-hover:scale-105">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/90 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-8 w-full text-white transform group-hover:-translate-y-2 lux-transition">
+                        <h3 class="text-2xl font-serif mb-2">Rodapés</h3>
+                        <p class="font-light text-sm opacity-0 group-hover:opacity-100 overflow-hidden max-h-0 group-hover:max-h-20 lux-transition text-brandPeach">Acabamento perfeito para pisos e paredes com elegância e precisão.</p>
+                        <div class="mt-4 flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-brandSand group-hover:text-white">
+                            Ver Catálogo 
+<svg class="w-4 h-4 group-hover:translate-x-1 lux-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Categoria 6 — Carpetes -->
+                <a href="catalogo/carpetes.html" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
+                    <img src="assets/img/carpet.jpg" alt="Carpetes sob medida em Criciúma — Ávila Cortinas e Persianas" class="absolute inset-0 w-full h-full object-cover lux-transition group-hover:scale-105">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/90 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-8 w-full text-white transform group-hover:-translate-y-2 lux-transition">
+                        <h3 class="text-2xl font-serif mb-2">Carpetes</h3>
+                        <p class="font-light text-sm opacity-0 group-hover:opacity-100 overflow-hidden max-h-0 group-hover:max-h-20 lux-transition text-brandPeach">Conforto, textura e sofisticação para residências e ambientes corporativos.</p>
+                        <div class="mt-4 flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-brandSand group-hover:text-white">
+                            Ver Catálogo 
+<svg class="w-4 h-4 group-hover:translate-x-1 lux-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Categoria 7 — Ripados -->
+                <a href="catalogo/ripados.html" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
+                    <img src="assets/img/ripados-01.jpg" alt="Ripados decorativos sob medida em Criciúma — Ávila Cortinas e Persianas" class="absolute inset-0 w-full h-full object-cover object-center lux-transition group-hover:scale-105" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/90 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-8 w-full text-white transform group-hover:-translate-y-2 lux-transition">
+                        <h3 class="text-2xl font-serif mb-2">Ripados</h3>
+                        <p class="font-light text-sm opacity-0 group-hover:opacity-100 overflow-hidden max-h-0 group-hover:max-h-20 lux-transition text-brandPeach">Acabamento amadeirado sofisticado que valoriza paredes e painéis com textura e personalidade.</p>
+                        <div class="mt-4 flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-brandSand group-hover:text-white">
+                            Ver Catálogo 
+<svg class="w-4 h-4 group-hover:translate-x-1 lux-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Categoria 8 — Painel Verde -->
+                <a href="catalogo/painel-verde.html" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
+                    <img src="assets/img/verde.JPEG" alt="Painel verde artificial em ambiente decorativo" class="absolute inset-0 w-full h-full object-cover object-center lux-transition group-hover:scale-105" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/90 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-8 w-full text-white transform group-hover:-translate-y-2 lux-transition">
+                        <h3 class="text-2xl font-serif mb-2">Painel Verde</h3>
+                        <p class="font-light text-sm opacity-0 group-hover:opacity-100 overflow-hidden max-h-0 group-hover:max-h-20 lux-transition text-brandPeach">Jardim vertical artificial que traz natureza, frescor e elegância a qualquer ambiente.</p>
+                        <div class="mt-4 flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-brandSand group-hover:text-white">
+                            Ver Catálogo 
+<svg class="w-4 h-4 group-hover:translate-x-1 lux-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Categoria 9 — Lambri -->
+                <a href="catalogo/lambri.html" class="group relative block w-full h-[450px] overflow-hidden bg-brandPeach/20">
+                    <img src="assets/img/lll.jpeg" alt="Lambri decorativo em madeira" class="absolute inset-0 w-full h-full object-cover object-center lux-transition group-hover:scale-105" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deepCharcoal/90 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-8 w-full text-white transform group-hover:-translate-y-2 lux-transition">
+                        <h3 class="text-2xl font-serif mb-2">Lambri</h3>
+                        <p class="font-light text-sm opacity-0 group-hover:opacity-100 overflow-hidden max-h-0 group-hover:max-h-20 lux-transition text-brandPeach">Revestimento em madeira natural, MDF ou PVC para paredes, tetos e fachadas com aconchego e sofisticação.</p>
+                        <div class="mt-4 flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-brandSand group-hover:text-white">
+                            Ver Catálogo
+<svg class="w-4 h-4 group-hover:translate-x-1 lux-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="miter" stroke-linejoin="miter" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
             </div>
         </div>
     </section>
@@ -595,7 +756,8 @@
                         <!-- Step 4 -->
                         <div class="relative flex items-center gap-6">
                             <div class="w-10 h-10 rounded-full bg-warmWood shadow-lg flex items-center justify-center font-serif text-white z-10 shrink-0">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                
+<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                             </div>
                             <div>
                                 <h3 class="text-xl font-medium text-deepCharcoal mb-1">Instalação com Excelência</h3>
@@ -626,6 +788,11 @@
                                 <svg class="icon-pause w-6 h-6 text-deepCharcoal hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                             </button>
                         </div>
+                        <!-- Aviso de som — some ao primeiro toque -->
+                        <div id="sound-hint" class="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 bg-black/60 backdrop-blur-sm text-white text-[11px] uppercase tracking-widest pointer-events-none" style="opacity:0;transition:opacity 0.6s ease">
+                            <svg class="w-3.5 h-3.5 animate-pulse" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                            Toque para ativar o som
+                        </div>
                         <!-- Mute/unmute (visível ao reproduzir) -->
                         <button class="btn-mute absolute bottom-4 right-4 w-9 h-9 rounded-full bg-black/50 items-center justify-center hover:bg-black/80 transition-all duration-200 hidden" aria-label="Ativar/desativar som">
                             <svg class="icon-sound-on w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
@@ -638,183 +805,501 @@
     </section>
 
     <!-- 4. Inspire-se (Editorial Layout) -->
-    <section id="inspiracao" class="py-24 md:py-32 bg-brandIce px-6 lg:px-12">
+    <section id="inspiracao" class="py-24 md:py-32 bg-[#0d0c0b] px-6 lg:px-12">
         <div class="max-w-7xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-                <div>
-                    <h2 class="text-3xl md:text-5xl font-serif text-deepCharcoal mb-4">Galeria de Inspirações</h2>
-                    <p class="font-light text-warmWood max-w-xl">Um portfólio visual dedicado a revelar o potencial das nossas soluções de alto padrão. Ambientes reais, curadoria excepcional.</p>
+
+            <!-- Header Premium -->
+            <div class="mb-10 md:mb-14">
+                <div class="flex flex-col md:flex-row justify-between items-end gap-8">
+                    <div>
+                        <p class="text-brandSand/55 text-[9px] uppercase tracking-[0.28em] font-light mb-5">— Portfólio Visual</p>
+                        <h2 class="text-3xl md:text-5xl font-serif text-white mb-3">Galeria de Inspirações</h2>
+                        <p class="font-light text-white/35 max-w-lg text-sm leading-relaxed">Ambientes reais, curadoria excepcional. Cada projeto, uma história de transformação.</p>
+                    </div>
+                    <div class="flex items-center gap-5 mb-1 flex-shrink-0">
+                        <a href="#colecoes" class="group flex items-center gap-3 text-[9px] uppercase tracking-[0.2em] text-white/35 hover:text-brandSand lux-transition whitespace-nowrap">
+                            <span>Conhecer Produtos</span>
+                            <svg class="w-3.5 h-3.5 group-hover:translate-x-1 lux-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </a>
+                        <div class="w-px h-4 bg-white/15 hidden md:block"></div>
+                        <div class="hidden md:flex items-center gap-3">
+                            <button class="gp-prev w-7 h-7 rounded-full border border-white/20 flex items-center justify-center text-white/40 hover:text-white hover:border-white/40 lux-transition" disabled aria-label="Página anterior">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                            </button>
+                            <span class="gp-counter text-white/30 text-[9px] tracking-[0.15em] font-light tabular-nums select-none">01 / 08</span>
+                            <button class="gp-next w-7 h-7 rounded-full border border-white/20 flex items-center justify-center text-white/40 hover:text-white hover:border-white/40 lux-transition" aria-label="Próxima página">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <!-- Oculto para focar inteiramente em Whatsapp conversion se clicar. -->
-                <a href="#colecoes" class="text-xs uppercase tracking-[0.15em] border-b border-deepCharcoal pb-1 hover:text-brandSand hover:border-brandSand lux-transition whitespace-nowrap">Conhecer Produtos</a>
+                <div class="mt-9 h-px bg-gradient-to-r from-brandSand/18 via-white/5 to-transparent"></div>
             </div>
 
-            <!-- Grids Assimétricos com Video Players -->
-            <div class="gallery-grid">
+            <!-- Slider de Vídeo — 1 vídeo por vez, scroll ou seta para navegar -->
+            <div class="gs-wrapper relative w-full bg-[#080706] overflow-hidden">
 
-                <!-- Card 1 — Sala de Estar (tall) -->
-                <div class="gv-card relative overflow-hidden bg-deepCharcoal tall" aria-label="Vídeo — Salas de Estar com Cortinas">
-                    <video class="absolute inset-0 w-full h-full object-cover" preload="none" playsinline muted>
-                        <source data-src="assets/video/gallery-sala.mp4" type="video/mp4">
-                    </video>
-                    <div class="gv-overlay absolute inset-0"></div>
-                    <div class="absolute inset-0 flex flex-col justify-between p-5 pointer-events-none">
-                        <!-- Topo -->
-                        <div class="flex justify-end pointer-events-auto">
-                            <span class="gv-label text-white uppercase tracking-widest text-[10px] border border-white/50 px-3 py-1.5 bg-black/20 backdrop-blur-sm">Salas de Estar</span>
-                        </div>
-                        <!-- Centro — botão play/pause -->
-                        <div class="flex items-center justify-center pointer-events-auto">
-                            <button class="gv-playbtn w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-2xl hover:bg-white hover:scale-110" aria-label="Reproduzir vídeo">
-                                <svg class="gv-icon-play w-5 h-5 text-deepCharcoal ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                <svg class="gv-icon-pause w-5 h-5 text-deepCharcoal hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                            </button>
-                        </div>
-                        <!-- Rodapé — progresso + mute -->
+                <!-- Slide 01 — Salas de Estar -->
+                <div class="gs-slide gs-active">
+                    <video class="w-full h-full object-contain" preload="none" playsinline muted><source data-src="assets/video/gallery-sala.mp4" type="video/mp4"></video>
+                    <div class="gs-grad absolute inset-0 pointer-events-none"></div>
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:4">
+                        <button class="gv-playbtn pointer-events-auto" aria-label="Reproduzir"><svg class="gv-icon-play w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="gv-icon-pause w-5 h-5 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 px-6 md:px-10 pb-5 md:pb-7 flex flex-col gap-2 pointer-events-none" style="z-index:4">
+                        <span class="gv-label">Salas de Estar</span>
                         <div class="gv-controls-bottom flex items-center gap-3 pointer-events-auto">
-                            <div class="gv-progress-track flex-1 h-[2px] bg-white/25 rounded-full">
-                                <div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div>
-                            </div>
-                            <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full flex-shrink-0" aria-label="Mudo / Com som">
-                                <svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-                                <svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
-                            </button>
+                            <div class="gv-progress-track flex-1 h-[1.5px] bg-white/20 rounded-full cursor-pointer"><div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div></div>
+                            <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/55 hover:text-white rounded-full flex-shrink-0 lux-transition" aria-label="Mudo"><svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg><svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg></button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card 2 — Quartos Suíte (wide) -->
-                <div class="gv-card relative overflow-hidden bg-deepCharcoal wide" aria-label="Vídeo — Quartos Suíte com Cortinas">
-                    <video class="absolute inset-0 w-full h-full object-cover" preload="none" playsinline muted>
-                        <source data-src="assets/video/gallery-quartos.mp4" type="video/mp4">
-                    </video>
-                    <div class="gv-overlay absolute inset-0"></div>
-                    <div class="absolute inset-0 flex flex-col justify-between p-5 pointer-events-none">
-                        <div class="flex justify-end pointer-events-auto">
-                            <span class="gv-label text-white uppercase tracking-widest text-[10px] border border-white/50 px-3 py-1.5 bg-black/20 backdrop-blur-sm">Quartos Suíte</span>
-                        </div>
-                        <div class="flex items-center justify-center pointer-events-auto">
-                            <button class="gv-playbtn w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-2xl hover:bg-white hover:scale-110" aria-label="Reproduzir vídeo">
-                                <svg class="gv-icon-play w-5 h-5 text-deepCharcoal ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                <svg class="gv-icon-pause w-5 h-5 text-deepCharcoal hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                            </button>
-                        </div>
+                <!-- Slide 02 — Quartos Suíte -->
+                <div class="gs-slide">
+                    <video class="w-full h-full object-contain" preload="none" playsinline muted><source data-src="assets/video/gallery-quartos.mp4" type="video/mp4"></video>
+                    <div class="gs-grad absolute inset-0 pointer-events-none"></div>
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:4">
+                        <button class="gv-playbtn pointer-events-auto" aria-label="Reproduzir"><svg class="gv-icon-play w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="gv-icon-pause w-5 h-5 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 px-6 md:px-10 pb-5 md:pb-7 flex flex-col gap-2 pointer-events-none" style="z-index:4">
+                        <span class="gv-label">Quartos Suíte</span>
                         <div class="gv-controls-bottom flex items-center gap-3 pointer-events-auto">
-                            <div class="gv-progress-track flex-1 h-[2px] bg-white/25 rounded-full">
-                                <div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div>
-                            </div>
-                            <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full flex-shrink-0" aria-label="Mudo / Com som">
-                                <svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-                                <svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
-                            </button>
+                            <div class="gv-progress-track flex-1 h-[1.5px] bg-white/20 rounded-full cursor-pointer"><div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div></div>
+                            <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/55 hover:text-white rounded-full flex-shrink-0 lux-transition" aria-label="Mudo"><svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg><svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg></button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card 3 — Piso e Papel de Parede -->
-                <div class="gv-card relative overflow-hidden bg-deepCharcoal" aria-label="Vídeo — Piso e Papel de Parede">
-                    <video class="absolute inset-0 w-full h-full object-cover" preload="none" playsinline muted>
-                        <source data-src="assets/video/gallery-piso.mp4" type="video/mp4">
-                    </video>
-                    <div class="gv-overlay absolute inset-0"></div>
-                    <div class="absolute inset-0 flex flex-col justify-between p-5 pointer-events-none">
-                        <div class="flex justify-end pointer-events-auto">
-                            <span class="gv-label text-white uppercase tracking-widest text-[10px] border border-white/50 px-3 py-1.5 bg-black/20 backdrop-blur-sm">Ambientes Comerciais</span>
-                        </div>
-                        <div class="flex items-center justify-center pointer-events-auto">
-                            <button class="gv-playbtn w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-2xl hover:bg-white hover:scale-110" aria-label="Reproduzir vídeo">
-                                <svg class="gv-icon-play w-5 h-5 text-deepCharcoal ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                <svg class="gv-icon-pause w-5 h-5 text-deepCharcoal hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                            </button>
-                        </div>
+                <!-- Slide 03 — Ambientes Comerciais -->
+                <div class="gs-slide">
+                    <video class="w-full h-full object-contain" preload="none" playsinline muted><source data-src="assets/video/gallery-piso.mp4" type="video/mp4"></video>
+                    <div class="gs-grad absolute inset-0 pointer-events-none"></div>
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:4">
+                        <button class="gv-playbtn pointer-events-auto" aria-label="Reproduzir"><svg class="gv-icon-play w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="gv-icon-pause w-5 h-5 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 px-6 md:px-10 pb-5 md:pb-7 flex flex-col gap-2 pointer-events-none" style="z-index:4">
+                        <span class="gv-label">Ambientes Comerciais</span>
                         <div class="gv-controls-bottom flex items-center gap-3 pointer-events-auto">
-                            <div class="gv-progress-track flex-1 h-[2px] bg-white/25 rounded-full">
-                                <div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div>
-                            </div>
-                            <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full flex-shrink-0" aria-label="Mudo / Com som">
-                                <svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-                                <svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
-                            </button>
+                            <div class="gv-progress-track flex-1 h-[1.5px] bg-white/20 rounded-full cursor-pointer"><div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div></div>
+                            <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/55 hover:text-white rounded-full flex-shrink-0 lux-transition" aria-label="Mudo"><svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg><svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg></button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card 4 — Carrossel Clientes & Parceiros (5 vídeos) -->
-                <div id="gallery-carousel" class="gv-card gv-started relative overflow-hidden bg-deepCharcoal" aria-label="Carrossel — Clientes e Parceiros">
-
-                    <!-- 5 vídeos empilhados; só o atual tem opacity:1 -->
-                    <video class="c-vid absolute inset-0 w-full h-full object-cover" style="opacity:1" preload="none" playsinline muted>
-                        <source data-src="assets/video/carousel-1.mp4" type="video/mp4">
-                    </video>
-                    <video class="c-vid absolute inset-0 w-full h-full object-cover" style="opacity:0" preload="none" playsinline muted>
-                        <source data-src="assets/video/carousel-2.mp4" type="video/mp4">
-                    </video>
-                    <video class="c-vid absolute inset-0 w-full h-full object-cover" style="opacity:0" preload="none" playsinline muted>
-                        <source data-src="assets/video/carousel-3.mp4" type="video/mp4">
-                    </video>
-                    <video class="c-vid absolute inset-0 w-full h-full object-cover" style="opacity:0" preload="none" playsinline muted>
-                        <source data-src="assets/video/carousel-4.mp4" type="video/mp4">
-                    </video>
-                    <video class="c-vid absolute inset-0 w-full h-full object-cover" style="opacity:0" preload="none" playsinline muted>
-                        <source data-src="assets/video/carousel-5.mp4" type="video/mp4">
-                    </video>
-
-                    <div class="gv-overlay absolute inset-0"></div>
-
-                    <div class="absolute inset-0 flex flex-col justify-between p-5 pointer-events-none">
-
-                        <!-- Topo: setas ← → + label -->
-                        <div class="flex justify-between items-center pointer-events-auto">
-                            <div class="flex gap-2">
-                                <button class="c-prev w-8 h-8 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center text-white" aria-label="Anterior">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-                                </button>
-                                <button class="c-next w-8 h-8 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center text-white" aria-label="Próximo">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                                </button>
-                            </div>
-                            <span class="gv-label text-white uppercase tracking-widest text-[10px] border border-white/50 px-3 py-1.5 bg-black/20 backdrop-blur-sm">Clientes &amp; Parceiros</span>
-                        </div>
-
-                        <!-- Centro: play / pause -->
-                        <div class="flex items-center justify-center pointer-events-auto">
-                            <button class="gv-playbtn w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-2xl hover:bg-white hover:scale-110" aria-label="Reproduzir vídeo">
-                                <svg class="gv-icon-play w-5 h-5 text-deepCharcoal ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                <svg class="gv-icon-pause w-5 h-5 text-deepCharcoal hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                            </button>
-                        </div>
-
-                        <!-- Rodapé: dots + progresso + mute -->
-                        <div class="flex flex-col gap-2.5 pointer-events-auto">
-                            <!-- Dots de navegação -->
-                            <div class="flex justify-center gap-2">
-                                <button class="c-dot active w-1.5 h-1.5 rounded-full" aria-label="Slide 1"></button>
-                                <button class="c-dot w-1.5 h-1.5 rounded-full bg-white/30" aria-label="Slide 2"></button>
-                                <button class="c-dot w-1.5 h-1.5 rounded-full bg-white/30" aria-label="Slide 3"></button>
-                                <button class="c-dot w-1.5 h-1.5 rounded-full bg-white/30" aria-label="Slide 4"></button>
-                                <button class="c-dot w-1.5 h-1.5 rounded-full bg-white/30" aria-label="Slide 5"></button>
-                            </div>
-                            <!-- Barra de progresso + mute -->
-                            <div class="gv-controls-bottom flex items-center gap-3">
-                                <div class="gv-progress-track flex-1 h-[2px] bg-white/25 rounded-full">
-                                    <div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div>
-                                </div>
-                                <span class="c-counter text-white/40 text-[9px] tracking-widest font-light select-none flex-shrink-0">01 / 05</span>
-                                <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full flex-shrink-0" aria-label="Mudo / Com som">
-                                    <svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-                                    <svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
-                                </button>
-                            </div>
-                        </div>
-
+                <!-- Slide 04 — Clientes & Parceiros -->
+                <div class="gs-slide">
+                    <video class="w-full h-full object-contain" preload="none" playsinline muted><source data-src="assets/video/carousel-1.mp4" type="video/mp4"></video>
+                    <div class="gs-grad absolute inset-0 pointer-events-none"></div>
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:4">
+                        <button class="gv-playbtn pointer-events-auto" aria-label="Reproduzir"><svg class="gv-icon-play w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="gv-icon-pause w-5 h-5 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
                     </div>
+                    <div class="absolute bottom-0 left-0 right-0 px-6 md:px-10 pb-5 md:pb-7 flex flex-col gap-2 pointer-events-none" style="z-index:4">
+                        <span class="gv-label">Clientes &amp; Parceiros</span>
+                        <div class="gv-controls-bottom flex items-center gap-3 pointer-events-auto">
+                            <div class="gv-progress-track flex-1 h-[1.5px] bg-white/20 rounded-full cursor-pointer"><div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div></div>
+                            <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/55 hover:text-white rounded-full flex-shrink-0 lux-transition" aria-label="Mudo"><svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg><svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 05 — Projetos Residenciais -->
+                <div class="gs-slide">
+                    <video class="w-full h-full object-contain" preload="none" playsinline muted><source data-src="assets/video/carousel-2.mp4" type="video/mp4"></video>
+                    <div class="gs-grad absolute inset-0 pointer-events-none"></div>
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:4">
+                        <button class="gv-playbtn pointer-events-auto" aria-label="Reproduzir"><svg class="gv-icon-play w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="gv-icon-pause w-5 h-5 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 px-6 md:px-10 pb-5 md:pb-7 flex flex-col gap-2 pointer-events-none" style="z-index:4">
+                        <span class="gv-label">Projetos Residenciais</span>
+                        <div class="gv-controls-bottom flex items-center gap-3 pointer-events-auto">
+                            <div class="gv-progress-track flex-1 h-[1.5px] bg-white/20 rounded-full cursor-pointer"><div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div></div>
+                            <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/55 hover:text-white rounded-full flex-shrink-0 lux-transition" aria-label="Mudo"><svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg><svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 06 — Espaços & Ambientes -->
+                <div class="gs-slide">
+                    <video class="w-full h-full object-contain" preload="none" playsinline muted><source data-src="assets/video/carousel-3.mp4" type="video/mp4"></video>
+                    <div class="gs-grad absolute inset-0 pointer-events-none"></div>
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:4">
+                        <button class="gv-playbtn pointer-events-auto" aria-label="Reproduzir"><svg class="gv-icon-play w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="gv-icon-pause w-5 h-5 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 px-6 md:px-10 pb-5 md:pb-7 flex flex-col gap-2 pointer-events-none" style="z-index:4">
+                        <span class="gv-label">Espaços &amp; Ambientes</span>
+                        <div class="gv-controls-bottom flex items-center gap-3 pointer-events-auto">
+                            <div class="gv-progress-track flex-1 h-[1.5px] bg-white/20 rounded-full cursor-pointer"><div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div></div>
+                            <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/55 hover:text-white rounded-full flex-shrink-0 lux-transition" aria-label="Mudo"><svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg><svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 07 — Detalhes & Acabamentos -->
+                <div class="gs-slide">
+                    <video class="w-full h-full object-contain" preload="none" playsinline muted><source data-src="assets/video/carousel-4.mp4" type="video/mp4"></video>
+                    <div class="gs-grad absolute inset-0 pointer-events-none"></div>
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:4">
+                        <button class="gv-playbtn pointer-events-auto" aria-label="Reproduzir"><svg class="gv-icon-play w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="gv-icon-pause w-5 h-5 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 px-6 md:px-10 pb-5 md:pb-7 flex flex-col gap-2 pointer-events-none" style="z-index:4">
+                        <span class="gv-label">Detalhes &amp; Acabamentos</span>
+                        <div class="gv-controls-bottom flex items-center gap-3 pointer-events-auto">
+                            <div class="gv-progress-track flex-1 h-[1.5px] bg-white/20 rounded-full cursor-pointer"><div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div></div>
+                            <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/55 hover:text-white rounded-full flex-shrink-0 lux-transition" aria-label="Mudo"><svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg><svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 08 — Transformações -->
+                <div class="gs-slide">
+                    <video class="w-full h-full object-contain" preload="none" playsinline muted><source data-src="assets/video/carousel-5.mp4" type="video/mp4"></video>
+                    <div class="gs-grad absolute inset-0 pointer-events-none"></div>
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:4">
+                        <button class="gv-playbtn pointer-events-auto" aria-label="Reproduzir"><svg class="gv-icon-play w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="gv-icon-pause w-5 h-5 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 px-6 md:px-10 pb-5 md:pb-7 flex flex-col gap-2 pointer-events-none" style="z-index:4">
+                        <span class="gv-label">Transformações</span>
+                        <div class="gv-controls-bottom flex items-center gap-3 pointer-events-auto">
+                            <div class="gv-progress-track flex-1 h-[1.5px] bg-white/20 rounded-full cursor-pointer"><div class="gv-progress-fill h-full bg-brandSand rounded-full" style="width:0%"></div></div>
+                            <button class="gv-btn-mute w-8 h-8 flex items-center justify-center text-white/55 hover:text-white rounded-full flex-shrink-0 lux-transition" aria-label="Mudo"><svg class="gv-icon-on w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg><svg class="gv-icon-off w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seta Esquerda -->
+                <button class="gs-arrow-prev absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-black/35 border border-white/20 flex items-center justify-center text-white/70 hover:bg-black/65 hover:border-white/45 hover:text-white lux-transition" aria-label="Vídeo anterior" disabled>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <!-- Seta Direita -->
+                <button class="gs-arrow-next absolute right-3 md:right-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-black/35 border border-white/20 flex items-center justify-center text-white/70 hover:bg-black/65 hover:border-white/45 hover:text-white lux-transition" aria-label="Próximo vídeo">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
+
+                <!-- Dots indicadores -->
+                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10 pointer-events-none">
+                    <span class="gs-dot gs-dot-active inline-block h-[3px] w-4 rounded-full bg-white/90"></span>
+                    <span class="gs-dot inline-block h-[3px] w-1.5 rounded-full bg-white/30"></span>
+                    <span class="gs-dot inline-block h-[3px] w-1.5 rounded-full bg-white/30"></span>
+                    <span class="gs-dot inline-block h-[3px] w-1.5 rounded-full bg-white/30"></span>
+                    <span class="gs-dot inline-block h-[3px] w-1.5 rounded-full bg-white/30"></span>
+                    <span class="gs-dot inline-block h-[3px] w-1.5 rounded-full bg-white/30"></span>
+                    <span class="gs-dot inline-block h-[3px] w-1.5 rounded-full bg-white/30"></span>
+                    <span class="gs-dot inline-block h-[3px] w-1.5 rounded-full bg-white/30"></span>
                 </div>
 
             </div>
+
         </div>
     </section>
 
-    <!-- 5. Showroom & Orçamento Direto -->
+    <!-- 5. Consultoras — Equipe de Atendimento Especializado -->
+    <section id="consultoras" class="py-24 md:py-32 bg-[#F2F0EB] px-6 lg:px-12">
+        <div class="max-w-7xl mx-auto">
+
+            <!-- Cabeçalho -->
+            <div class="text-center mb-16">
+                <p class="uppercase tracking-[0.2em] text-brandBlue text-xs font-semibold mb-4">Quem Faz a Ávila</p>
+                <h2 class="text-3xl md:text-5xl font-serif text-deepCharcoal mb-6">As Pessoas por Trás de Cada Projeto</h2>
+                <p class="font-light text-warmWood max-w-xl mx-auto">Da gestão ao atendimento, cada membro da nossa equipe carrega o mesmo compromisso: transformar seu ambiente com cuidado, precisão e elegância.</p>
+            </div>
+
+            <!-- Card Gustavo — Destaque -->
+            <div class="mb-12">
+                <div class="bg-brandIce shadow-sm border border-brandSand/20 flex flex-col md:flex-row overflow-hidden max-w-5xl mx-auto">
+                    <div class="md:w-2/5 overflow-hidden" style="min-height:460px">
+                        <img src="assets/img/gustavoavilasorrindodonoempresaavila.jpg" alt="Gustavo — Dono e Gerente Administrativo da Ávila Cortinas e Persianas em Criciúma" class="w-full h-full object-cover object-top lux-transition hover:scale-105" style="min-height:460px">
+                    </div>
+                    <div class="md:w-3/5 p-8 md:p-12 flex flex-col justify-center">
+                        <p class="uppercase tracking-[0.2em] text-brandBlue text-[10px] font-semibold mb-3">Gestão &amp; Liderança</p>
+                        <h3 class="text-2xl md:text-3xl font-serif text-deepCharcoal mb-2">Gustavo Ávila</h3>
+                        <p class="uppercase tracking-widest text-xs text-warmWood mb-6">Dono e Gerente Administrativo</p>
+                        <p class="font-light text-warmWood text-sm leading-relaxed">À frente da Ávila Cortinas e Persianas, Gustavo Ávila dá continuidade a uma história construída com dedicação, família e compromisso com a qualidade. A empresa nasceu em 1998, pelas mãos de seus pais, Ilton Ávila e Márcia Ávila, que iniciaram a trajetória da marca com o propósito de oferecer atendimento próximo, produtos de confiança e soluções capazes de valorizar cada ambiente.</p>
+                        <p class="font-light text-warmWood text-sm leading-relaxed mt-4">Formado em Arquitetura e Urbanismo, Gustavo une o conhecimento técnico da área com a experiência prática de quem cresceu acompanhando de perto a evolução da empresa. Esse olhar permite que cada projeto seja conduzido com mais sensibilidade estética, atenção às proporções, funcionalidade e cuidado com os detalhes que fazem diferença no resultado final.</p>
+                        <p class="font-light text-warmWood text-sm leading-relaxed mt-4">Hoje, sua gestão combina tradição, responsabilidade e visão contemporânea, preservando os valores que deram origem à Ávila e fortalecendo a busca constante por excelência, acabamento impecável e experiências que realmente encantam os clientes.</p>
+                        <p class="font-light text-warmWood text-sm leading-relaxed mt-4">Cada projeto é acompanhado com dedicação, porque para a Ávila cada ambiente carrega uma história, e cada cliente merece receber uma solução pensada com cuidado, bom gosto e compromisso.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid das Consultoras -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-5xl mx-auto">
+
+                <!-- Consultora 01 -->
+                <div class="bg-brandIce shadow-sm border border-brandSand/20 overflow-hidden group">
+                    <div class="overflow-hidden" style="height:380px">
+                        <img src="assets/img/c1.jpg" alt="Consultora Ávila — atendimento em cortinas sob medida e persianas em Criciúma" class="w-full h-full object-cover object-top lux-transition group-hover:scale-105">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-serif text-deepCharcoal mb-1">Zilda Paiter</h3>
+                        <p class="uppercase tracking-widest text-[10px] text-brandBlue mb-4">Consultora</p>
+                        <p class="font-light text-warmWood text-xs leading-relaxed">Com anos de experiência em projetos de ambientação, Zilda tem a rara habilidade de ouvir o que o cliente ainda não consegue colocar em palavras. Seu atendimento é paciente, detalhista e profundamente humano — porque transformar um espaço começa por entender quem vive nele.</p>
+                    </div>
+                </div>
+
+                <!-- Consultora 02 -->
+                <div class="bg-brandIce shadow-sm border border-brandSand/20 overflow-hidden group">
+                    <div class="overflow-hidden" style="height:380px">
+                        <img src="assets/img/c2.jpg" alt="Consultora Ávila — projeto decorativo personalizado com papel de parede e pisos vinílicos" class="w-full h-full object-cover object-top lux-transition group-hover:scale-105">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-serif text-deepCharcoal mb-1">Bruna Monteiro</h3>
+                        <p class="uppercase tracking-widest text-[10px] text-brandBlue mb-4">Consultora</p>
+                        <p class="font-light text-warmWood text-xs leading-relaxed">Bruna alia sensibilidade estética e atenção minuciosa a cada detalhe do projeto. Do entendimento inicial à entrega, ela conduz o processo com leveza e precisão — traduzindo o gosto e a rotina do cliente em escolhas que elevam e personalizam cada canto do ambiente.</p>
+                    </div>
+                </div>
+
+                <!-- Consultora 03 -->
+                <div class="bg-brandIce shadow-sm border border-brandSand/20 overflow-hidden group">
+                    <div class="overflow-hidden" style="height:380px">
+                        <img src="assets/img/c3.jpg" alt="Consultora Ávila — persianas e cortinas sob medida para ambientes residenciais e corporativos" class="w-full h-full object-cover object-top lux-transition group-hover:scale-105">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-serif text-deepCharcoal mb-1">Diana Dutra</h3>
+                        <p class="uppercase tracking-widest text-[10px] text-brandBlue mb-4">Consultora</p>
+                        <p class="font-light text-warmWood text-xs leading-relaxed">Orientada por comprometimento e excelência, Diana acompanha cada etapa do projeto com dedicação integral. Sua abordagem é direta, cuidadosa e focada no resultado — para que cada cliente saia com a certeza de ter feito a escolha certa para o seu espaço.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- CTA da seção -->
+            <div class="text-center mt-14" x-data="{ aberto: false }">
+
+                <button @click="aberto = true" class="inline-flex items-center gap-3 px-10 py-4 bg-deepCharcoal text-white uppercase tracking-[0.1em] text-xs hover:bg-black lux-transition shadow-md">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                    Falar com a Equipe
+                </button>
+
+                <!-- Modal Consultoras -->
+                <div
+                    x-show="aberto"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0"
+                    @click.self="aberto = false"
+                    @keydown.escape.window="aberto = false"
+                    class="fixed inset-0 z-50 flex items-center justify-center px-4 bg-deepCharcoal/70 backdrop-blur-sm"
+                    style="display:none"
+                >
+                    <div
+                        x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-200"
+                        x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                        class="bg-brandIce w-full max-w-3xl shadow-2xl border border-brandSand/30 relative"
+                    >
+                        <!-- Fechar -->
+                        <button @click="aberto = false" class="absolute top-5 right-5 text-warmWood hover:text-deepCharcoal lux-transition" aria-label="Fechar">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+
+                        <!-- Cabeçalho -->
+                        <div class="px-8 pt-10 pb-6 text-center border-b border-brandSand/20">
+                            <p class="uppercase tracking-[0.2em] text-brandBlue text-[10px] font-semibold mb-2">Atendimento Especializado</p>
+                            <h3 class="font-serif text-2xl text-deepCharcoal">Fale com uma Consultora</h3>
+                            <p class="text-warmWood text-xs font-light mt-2">Escolha com quem prefere conversar</p>
+                        </div>
+
+                        <!-- Cards -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-brandSand/20">
+
+                            <!-- Zilda Paiter -->
+                            <div class="flex flex-col items-center px-6 py-8 gap-4 group">
+                                <div class="w-24 h-24 overflow-hidden rounded-full border-2 border-brandSand/40 shadow-sm">
+                                    <img src="assets/img/c1.jpg" alt="Zilda Paiter — Consultora Ávila" class="w-full h-full object-cover object-top lux-transition group-hover:scale-105">
+                                </div>
+                                <div class="text-center">
+                                    <p class="font-serif text-base text-deepCharcoal">Zilda Paiter</p>
+                                    <p class="uppercase tracking-widest text-[9px] text-brandBlue mt-1">Consultora</p>
+                                </div>
+                                <a href="https://wa.me/5548999289547" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-6 py-3 bg-deepCharcoal text-white uppercase tracking-[0.1em] text-[10px] hover:bg-black lux-transition shadow-sm w-full justify-center">
+                                    <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                                    Conversar
+                                </a>
+                            </div>
+
+                            <!-- Bruna Monteiro -->
+                            <div class="flex flex-col items-center px-6 py-8 gap-4 group">
+                                <div class="w-24 h-24 overflow-hidden rounded-full border-2 border-brandSand/40 shadow-sm">
+                                    <img src="assets/img/c2.jpg" alt="Bruna Monteiro — Consultora Ávila" class="w-full h-full object-cover object-top lux-transition group-hover:scale-105">
+                                </div>
+                                <div class="text-center">
+                                    <p class="font-serif text-base text-deepCharcoal">Bruna Monteiro</p>
+                                    <p class="uppercase tracking-widest text-[9px] text-brandBlue mt-1">Consultora</p>
+                                </div>
+                                <a href="https://wa.me/5548991666768" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-6 py-3 bg-deepCharcoal text-white uppercase tracking-[0.1em] text-[10px] hover:bg-black lux-transition shadow-sm w-full justify-center">
+                                    <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                                    Conversar
+                                </a>
+                            </div>
+
+                            <!-- Diana Dutra -->
+                            <div class="flex flex-col items-center px-6 py-8 gap-4 group">
+                                <div class="w-24 h-24 overflow-hidden rounded-full border-2 border-brandSand/40 shadow-sm">
+                                    <img src="assets/img/c3.jpg" alt="Diana Dutra — Consultora Ávila" class="w-full h-full object-cover object-top lux-transition group-hover:scale-105">
+                                </div>
+                                <div class="text-center">
+                                    <p class="font-serif text-base text-deepCharcoal">Diana Dutra</p>
+                                    <p class="uppercase tracking-widest text-[9px] text-brandBlue mt-1">Consultora</p>
+                                </div>
+                                <a href="https://wa.me/5548991364563" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-6 py-3 bg-deepCharcoal text-white uppercase tracking-[0.1em] text-[10px] hover:bg-black lux-transition shadow-sm w-full justify-center">
+                                    <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                                    Conversar
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 6. Avaliações de Clientes -->
+    <section id="avaliacoes" class="py-24 md:py-32 bg-brandIce px-6 lg:px-12">
+        <div class="max-w-7xl mx-auto">
+
+            <!-- Cabeçalho -->
+            <div class="text-center mb-16">
+                <p class="uppercase tracking-[0.2em] text-brandBlue text-xs font-semibold mb-4">Prova Social</p>
+                <h2 class="text-3xl md:text-5xl font-serif text-deepCharcoal mb-6">O Que Nossos Clientes Dizem</h2>
+                <p class="font-light text-warmWood max-w-lg mx-auto">A confiança de cada cliente é o nosso maior reconhecimento. Confira o que dizem quem já transformou o ambiente com a Ávila.</p>
+
+                <!-- Review Badge -->
+                <div class="inline-flex items-center gap-3 mt-8 px-5 py-2.5 bg-white border border-brandSand/30 shadow-sm">
+                    <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    <div class="flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-3.5 h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-3.5 h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-3.5 h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-3.5 h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <span id="google-reviews-rating" class="text-warmWood text-xs font-semibold">5.0</span>
+                    <span class="text-warmWood/50 text-xs">|</span>
+                    <span id="google-reviews-count" class="text-warmWood text-xs font-light uppercase tracking-widest">Clientes Ávila</span>
+                </div>
+                <p id="google-reviews-sort" class="mt-3 text-[10px] text-warmWood/45 uppercase tracking-[0.18em]">Depoimentos selecionados de clientes</p>
+            </div>
+
+            <!-- Grid de Avaliações -->
+            <div id="google-reviews-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" style="display:none">
+
+                <!-- Avaliação 01 -->
+                <div class="bg-white border border-brandSand/20 shadow-sm p-7 flex flex-col gap-5 lux-transition hover:shadow-md hover:-translate-y-0.5">
+                    <div class="flex gap-0.5">
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="font-light text-warmWood text-sm leading-relaxed flex-1">"Atendimento excelente, equipe muito atenciosa e produtos de ótima qualidade. Superou todas as nossas expectativas."</p>
+                    <div class="flex items-center justify-between pt-4 border-t border-brandSand/20">
+                        <div>
+                            <p class="text-xs font-medium text-deepCharcoal">Cliente 01</p>
+                            <p class="text-[10px] text-warmWood/50 uppercase tracking-widest">Cliente Ávila</p>
+                        </div>
+                        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Avaliação 02 -->
+                <div class="bg-white border border-brandSand/20 shadow-sm p-7 flex flex-col gap-5 lux-transition hover:shadow-md hover:-translate-y-0.5">
+                    <div class="flex gap-0.5">
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="font-light text-warmWood text-sm leading-relaxed flex-1">"Ficamos muito satisfeitos com o resultado. A Ávila nos ajudou a escolher a melhor solução para o ambiente, com muita paciência e profissionalismo."</p>
+                    <div class="flex items-center justify-between pt-4 border-t border-brandSand/20">
+                        <div>
+                            <p class="text-xs font-medium text-deepCharcoal">Cliente 02</p>
+                            <p class="text-[10px] text-warmWood/50 uppercase tracking-widest">Cliente Ávila</p>
+                        </div>
+                        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Avaliação 03 -->
+                <div class="bg-white border border-brandSand/20 shadow-sm p-7 flex flex-col gap-5 lux-transition hover:shadow-md hover:-translate-y-0.5">
+                    <div class="flex gap-0.5">
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="font-light text-warmWood text-sm leading-relaxed flex-1">"Serviço profissional, acabamento impecável e atendimento muito cuidadoso em cada etapa. Recomendo com toda a certeza."</p>
+                    <div class="flex items-center justify-between pt-4 border-t border-brandSand/20">
+                        <div>
+                            <p class="text-xs font-medium text-deepCharcoal">Cliente 03</p>
+                            <p class="text-[10px] text-warmWood/50 uppercase tracking-widest">Cliente Ávila</p>
+                        </div>
+                        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Avaliação 04 -->
+                <div class="bg-white border border-brandSand/20 shadow-sm p-7 flex flex-col gap-5 lux-transition hover:shadow-md hover:-translate-y-0.5">
+                    <div class="flex gap-0.5">
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="font-light text-warmWood text-sm leading-relaxed flex-1">"Recomendo a Ávila pela qualidade, atenção em todas as etapas e resultado final que superou o que imaginávamos para o espaço."</p>
+                    <div class="flex items-center justify-between pt-4 border-t border-brandSand/20">
+                        <div>
+                            <p class="text-xs font-medium text-deepCharcoal">Cliente 04</p>
+                            <p class="text-[10px] text-warmWood/50 uppercase tracking-widest">Cliente Ávila</p>
+                        </div>
+                        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 7. Showroom & Orçamento Direto -->
     <section id="showroom" class="py-24 bg-brandPeach/30">
         <div class="max-w-4xl mx-auto px-6 text-center">
             <h2 class="text-3xl md:text-5xl font-serif text-deepCharcoal mb-6">Pronto para elevar seu ambiente?</h2>
@@ -842,10 +1327,25 @@
                     </div>
                 </div>
             </div>
+
+            <div class="mt-10 flex justify-center">
+                <a href="tour-virtual.html" class="group inline-flex w-full sm:w-auto items-center justify-center gap-4 border border-brandSand/70 bg-white px-7 sm:px-9 py-4 text-deepCharcoal shadow-sm lux-transition hover:-translate-y-1 hover:border-deepCharcoal hover:bg-deepCharcoal hover:text-white hover:shadow-xl">
+                    <span class="flex h-10 w-10 shrink-0 items-center justify-center border border-brandSand/60 text-brandBlue lux-transition group-hover:border-white/30 group-hover:text-brandSand">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
+                        </svg>
+                    </span>
+                    <span class="text-center text-xs font-semibold uppercase tracking-[0.18em] leading-relaxed">Conhecer o Tour Virtual</span>
+                    <svg class="h-4 w-4 shrink-0 lux-transition group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                </a>
+            </div>
         </div>
     </section>
 
-    <!-- 6. FAQ -->
+    <!-- 8. FAQ -->
     <section id="faq" class="py-24 md:py-32 bg-[#F2F0EB]" x-data="{ active: null }">
         <div class="max-w-4xl mx-auto px-6 lg:px-12">
 
@@ -1000,7 +1500,7 @@
         </div>
     </section>
 
-    <!-- 7. Footer -->
+    <!-- 9. Footer -->
     <footer class="bg-[#F2EAE5] text-deepCharcoal py-16 md:py-20 border-t border-brandSand/20 relative">
         <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-warmWood/30 mt-2"></div>
         <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16 items-start">
@@ -1044,6 +1544,159 @@
 
     <script>
     (function () {
+        var grid = document.getElementById('google-reviews-grid');
+        if (!grid) return;
+
+        var config = {
+            apiKey: window.AVILA_GOOGLE_MAPS_API_KEY || '',
+            placeId: 'ChIJSSNIyYCCIZUReG-GTJDn41s',
+            maxReviews: 4,
+            profileUrl: 'https://www.google.com/maps/search/?api=1&query=%C3%81vila%20Cortinas%20e%20Persianas&query_place_id=ChIJSSNIyYCCIZUReG-GTJDn41s'
+        };
+
+        var ratingEl = document.getElementById('google-reviews-rating');
+        var countEl = document.getElementById('google-reviews-count');
+
+        function showGrid(html) {
+            grid.innerHTML = html;
+            grid.style.display = 'grid';
+        }
+
+        function escapeHtml(value) {
+            return String(value || '').replace(/[&<>"']/g, function (char) {
+                return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char];
+            });
+        }
+
+        function stars(sizeClass) {
+            var star = '<svg class="' + sizeClass + ' text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>';
+            return star + star + star + star + star;
+        }
+
+        function googleMark() {
+            return '<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>';
+        }
+
+        function reviewText(review) {
+            return String(review.text || review.originalText || '').trim();
+        }
+
+        function authorData(review) {
+            var attr = review.authorAttribution || {};
+            return {
+                name: attr.displayName || review.author_name || 'Cliente Google',
+                url: attr.uri || review.author_url || review.googleMapsURI || '#avaliacoes',
+                photo: attr.photoURI || review.profile_photo_url || ''
+            };
+        }
+
+        function scoreReview(review) {
+            var data = authorData(review);
+            var text = reviewText(review);
+            var published = review.publishTime ? new Date(review.publishTime).getTime() : 0;
+            return Math.min(text.length, 420) + (data.photo ? 36 : 0) + (published ? published / 1000000000000 : 0);
+        }
+
+        function renderNotice(title, body) {
+            showGrid('<div class="lg:col-span-4 bg-white border border-brandSand/20 shadow-sm p-8 md:p-10 text-center">' +
+                '<p class="font-serif text-xl text-deepCharcoal mb-3">' + escapeHtml(title) + '</p>' +
+                '<p class="font-light text-sm text-warmWood max-w-2xl mx-auto leading-relaxed">' + escapeHtml(body) + '</p>' +
+                '<a href="' + config.profileUrl + '" target="_blank" rel="noopener" class="inline-flex items-center gap-3 mt-7 px-7 py-3 border border-deepCharcoal text-deepCharcoal uppercase tracking-[0.12em] text-[10px] hover:bg-deepCharcoal hover:text-white lux-transition">' +
+                googleMark() + 'Ver perfil no Google</a></div>');
+        }
+
+        function renderReviews(place) {
+            var reviews = Array.from(place.reviews || [])
+                .filter(function (review) { return Number(review.rating) === 5 && reviewText(review).length > 0; });
+            if (!place.manualOrder) {
+                reviews.sort(function (a, b) { return scoreReview(b) - scoreReview(a); });
+            }
+            reviews = reviews.slice(0, config.maxReviews);
+
+            if (ratingEl && place.rating) ratingEl.textContent = Number(place.rating).toFixed(1);
+            if (countEl && place.userRatingCount) countEl.textContent = place.userRatingCount + ' avaliações no Google';
+
+            if (!reviews.length) {
+                renderNotice('Avaliações não retornadas pelo Google', 'O perfil foi localizado, mas a API não retornou avaliações 5 estrelas com comentário para exibir neste momento.');
+                return;
+            }
+
+            showGrid(reviews.map(function (review) {
+                var author = authorData(review);
+                var initials = author.name.split(/\s+/).map(function (part) { return part[0]; }).join('').slice(0, 2).toUpperCase();
+                var avatar = author.photo
+                    ? '<img src="' + escapeHtml(author.photo) + '" alt="' + escapeHtml(author.name) + '" class="w-full h-full object-cover" loading="lazy" referrerpolicy="no-referrer">'
+                    : '<span class="font-serif text-sm text-deepCharcoal">' + escapeHtml(initials || 'G') + '</span>';
+                var time = review.relativePublishTimeDescription || '';
+
+                return '<article class="bg-white border border-brandSand/20 shadow-sm p-7 flex flex-col gap-5 lux-transition hover:shadow-md hover:-translate-y-0.5">' +
+                    '<div class="flex items-start justify-between gap-4">' +
+                        '<div class="flex gap-0.5" aria-label="5 estrelas">' + stars('w-4 h-4') + '</div>' +
+                        '<a href="' + config.profileUrl + '" target="_blank" rel="noopener" class="inline-flex items-center justify-center w-5 h-5 opacity-90 lux-transition hover:opacity-100" aria-label="Ver avaliações no Google">' + googleMark() + '</a>' +
+                    '</div>' +
+                    '<p class="font-light text-warmWood text-sm leading-relaxed flex-1">"' + escapeHtml(reviewText(review)) + '"</p>' +
+                    '<div class="flex items-center gap-3 pt-4 border-t border-brandSand/20">' +
+                        '<div class="w-11 h-11 rounded-full overflow-hidden bg-brandPeach/60 border border-brandSand/30 flex items-center justify-center shrink-0">' + avatar + '</div>' +
+                        '<div class="min-w-0">' +
+                            '<p class="block text-xs font-medium text-deepCharcoal truncate">' + escapeHtml(author.name) + '</p>' +
+                            '<p class="text-[10px] text-warmWood/50 uppercase tracking-widest">Cliente Ávila</p>' +
+                        '</div>' +
+                    '</div>' +
+                '</article>';
+            }).join(''));
+        }
+
+        async function fetchGoogleReviews() {
+            try {
+                var placesLib = await google.maps.importLibrary('places');
+                var place = new placesLib.Place({ id: config.placeId });
+                await place.fetchFields({ fields: ['displayName', 'rating', 'userRatingCount', 'googleMapsURI', 'reviews'] });
+                if (place.googleMapsURI) config.profileUrl = place.googleMapsURI;
+                renderReviews(place);
+            } catch (error) {
+                renderNotice('Não foi possível carregar as avaliações', 'Confira se a chave Google Maps está ativa para Maps JavaScript API e Places API, com o domínio autorizado.');
+            }
+        }
+
+        function loadGoogleMaps() {
+            renderReviews({
+                rating: 5,
+                manualOrder: true,
+                reviews: [
+                    {
+                        rating: 5,
+                        author_name: 'Neuza Cardoso',
+                        profile_photo_url: 'assets/img/reviews/neuza-cardoso.jpg',
+                        text: 'A empresa tem um excelente atendimento, com muita atenção e profissionalismo em todas as etapas. Ótima qualidade, com acabamento impecável. Fiquei muito satisfeita com a experiência e recomendo com confiança.'
+                    },
+                    {
+                        rating: 5,
+                        author_name: 'Alfredo Júnior',
+                        profile_photo_url: 'assets/img/reviews/alfredo-junior.jpg',
+                        text: 'Loja excelente, atendimento ótimo e muito profissional. A equipe foi clara, cuidadosa e entregou um resultado de alto padrão.'
+                    },
+                    {
+                        rating: 5,
+                        author_name: 'Andressa Caneloni',
+                        profile_photo_url: 'assets/img/reviews/andressa-caneloni.jpg',
+                        text: 'Tudo muito organizado, com atenção aos detalhes e sem aquela pressa que a gente vê em muitos lugares. Fiz um projeto com cortinas sob medida e o ambiente ficou muito mais bonito e aconchegante.'
+                    },
+                    {
+                        rating: 5,
+                        author_name: 'Roberto Sampaio',
+                        profile_photo_url: 'assets/img/reviews/roberto-sampaio.jpg',
+                        text: 'A Ávila superou minhas expectativas com profissionalismo e bom gosto. Tanto nas cortinas quanto nos acabamentos, o cuidado da equipe fez muita diferença.'
+                    }
+                ]
+            });
+        }
+
+        loadGoogleMaps();
+    })();
+    </script>
+
+    <script>
+    (function () {
         var wrapper = document.querySelector('.video-wrapper');
         var videoEl = document.getElementById('atendimento-video');
         if (!wrapper || !videoEl) return;
@@ -1081,6 +1734,25 @@
             videoEl.play().catch(function () {});
         }
 
+        var soundHint = document.getElementById('sound-hint');
+        var autoUnmuted = false;
+
+        function unmuteOnInteraction() {
+            if (autoUnmuted) return;
+            autoUnmuted = true;
+            videoEl.muted = false;
+            iconOn.classList.remove('hidden');
+            iconOff.classList.add('hidden');
+            if (soundHint) { soundHint.style.opacity = '0'; }
+            ['click','touchstart','scroll','keydown'].forEach(function(ev) {
+                document.removeEventListener(ev, unmuteOnInteraction);
+            });
+        }
+
+        ['click','touchstart','scroll','keydown'].forEach(function(ev) {
+            document.addEventListener(ev, unmuteOnInteraction, { once: true, passive: true });
+        });
+
         function setPlaying(playing) {
             if (playing) {
                 overlay.style.opacity = '0';
@@ -1089,6 +1761,7 @@
                 btnMute.classList.add('flex');
                 iconPlay.classList.add('hidden');
                 iconPause.classList.remove('hidden');
+                if (soundHint && !autoUnmuted) { soundHint.style.opacity = '1'; }
             } else {
                 overlay.style.opacity = '1';
                 overlay.style.pointerEvents = 'auto';
@@ -1096,6 +1769,7 @@
                 btnMute.classList.remove('flex');
                 iconPlay.classList.remove('hidden');
                 iconPause.classList.add('hidden');
+                if (soundHint) { soundHint.style.opacity = '0'; }
             }
         }
 
@@ -1119,10 +1793,160 @@
     })();
     </script>
 
-    <!-- Gallery Video Players — lazy load + play/pause + progress + mute -->
+    <!-- Gallery Slider — navegação, play individual, scroll do mouse -->
     <script>
     (function () {
-        var allCards = document.querySelectorAll('.gv-card');
+        var wrapper = document.querySelector('.gs-wrapper');
+        if (!wrapper) return;
+
+        var slides   = Array.from(wrapper.querySelectorAll('.gs-slide'));
+        var total    = slides.length;
+        var cur      = 0;
+        var loaded   = {};
+
+        var counters  = Array.from(document.querySelectorAll('.gp-counter'));
+        var extPrevs  = Array.from(document.querySelectorAll('.gp-prev'));
+        var extNexts  = Array.from(document.querySelectorAll('.gp-next'));
+        var intPrev   = wrapper.querySelector('.gs-arrow-prev');
+        var intNext   = wrapper.querySelector('.gs-arrow-next');
+        var dots      = Array.from(wrapper.querySelectorAll('.gs-dot'));
+
+        /* Lazy load */
+        function loadSlide(idx) {
+            if (loaded[idx]) return;
+            loaded[idx] = true;
+            slides[idx].querySelectorAll('source[data-src]').forEach(function(s){ s.src = s.dataset.src; });
+            slides[idx].querySelector('video').load();
+        }
+
+        if ('IntersectionObserver' in window) {
+            var io = new IntersectionObserver(function(e){ if(e[0].isIntersecting){ loadSlide(0); io.unobserve(wrapper); } }, { rootMargin:'300px 0px' });
+            io.observe(wrapper);
+        } else { loadSlide(0); }
+
+        /* UI update */
+        function updateUI() {
+            var label = ('0'+(cur+1)).slice(-2) + ' / ' + ('0'+total).slice(-2);
+            counters.forEach(function(c){ c.textContent = label; });
+            var pDis = cur === 0, nDis = cur === total-1;
+            extPrevs.forEach(function(b){ b.disabled = pDis; });
+            extNexts.forEach(function(b){ b.disabled = nDis; });
+            if (intPrev) intPrev.disabled = pDis;
+            if (intNext) intNext.disabled = nDis;
+            dots.forEach(function(d,i){
+                d.classList.toggle('gs-dot-active', i === cur);
+                d.style.width = i === cur ? '1rem' : '0.375rem';
+                d.style.background = i === cur ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.28)';
+            });
+        }
+
+        /* Navigate */
+        function goTo(idx) {
+            if (idx < 0 || idx >= total || idx === cur) return;
+            var vid = slides[cur].querySelector('video');
+            if (vid && !vid.paused) vid.pause();
+            slides[cur].classList.remove('gs-active');
+            cur = idx;
+            loadSlide(cur);
+            slides[cur].classList.add('gs-active');
+            updateUI();
+        }
+
+        /* Per-slide controls */
+        slides.forEach(function(slide) {
+            var video    = slide.querySelector('video');
+            var btnPlay  = slide.querySelector('.gv-playbtn');
+            var iconPlay = btnPlay.querySelector('.gv-icon-play');
+            var iconPause= btnPlay.querySelector('.gv-icon-pause');
+            var btnMute  = slide.querySelector('.gv-btn-mute');
+            var iconOn   = btnMute.querySelector('.gv-icon-on');
+            var iconOff  = btnMute.querySelector('.gv-icon-off');
+            var track    = slide.querySelector('.gv-progress-track');
+            var fill     = slide.querySelector('.gv-progress-fill');
+            var interactionTimer = null;
+
+            function hideInteraction() {
+                slide.classList.remove('gv-user-active');
+            }
+
+            function showInteraction() {
+                if (!slide.classList.contains('gv-playing')) return;
+                slide.classList.add('gv-user-active');
+                clearTimeout(interactionTimer);
+                interactionTimer = setTimeout(hideInteraction, 950);
+            }
+
+            function setPlaying(p) {
+                if (p) {
+                    slide.classList.add('gv-playing','gv-started');
+                    iconPlay.classList.add('hidden');
+                    iconPause.classList.remove('hidden');
+                    showInteraction();
+                } else {
+                    slide.classList.remove('gv-playing','gv-user-active');
+                    clearTimeout(interactionTimer);
+                    iconPlay.classList.remove('hidden');
+                    iconPause.classList.add('hidden');
+                }
+            }
+            function togglePlay() {
+                if (video.paused) {
+                    video.muted = false; iconOn.classList.remove('hidden'); iconOff.classList.add('hidden');
+                    video.play().catch(function(){});
+                } else { video.pause(); }
+            }
+
+            btnPlay.addEventListener('click', function(e){ e.stopPropagation(); togglePlay(); });
+            slide.addEventListener('pointermove', showInteraction);
+            slide.addEventListener('pointerdown', showInteraction);
+            slide.addEventListener('touchstart', showInteraction, { passive: true });
+            slide.addEventListener('pointerleave', hideInteraction);
+            slide.addEventListener('click', function(e){
+                if (btnPlay.contains(e.target) || btnMute.contains(e.target) ||
+                    (intPrev && intPrev.contains(e.target)) || (intNext && intNext.contains(e.target))) return;
+                togglePlay();
+            });
+            video.addEventListener('play',  function(){ setPlaying(true); });
+            video.addEventListener('pause', function(){ setPlaying(false); });
+            video.addEventListener('ended', function(){ setPlaying(false); fill.style.width='0%'; });
+            video.addEventListener('timeupdate', function(){
+                if (video.duration) fill.style.width = (video.currentTime/video.duration*100)+'%';
+            });
+            track.addEventListener('click', function(e){
+                if (!video.duration) return;
+                var r = track.getBoundingClientRect();
+                video.currentTime = ((e.clientX-r.left)/r.width)*video.duration;
+            });
+            btnMute.addEventListener('click', function(e){
+                e.stopPropagation();
+                video.muted = !video.muted;
+                iconOn.classList.toggle('hidden', video.muted);
+                iconOff.classList.toggle('hidden', !video.muted);
+            });
+        });
+
+        /* Arrow nav */
+        if (intPrev) intPrev.addEventListener('click', function(){ goTo(cur-1); });
+        if (intNext) intNext.addEventListener('click', function(){ goTo(cur+1); });
+        extPrevs.forEach(function(b){ b.addEventListener('click', function(){ goTo(cur-1); }); });
+        extNexts.forEach(function(b){ b.addEventListener('click', function(){ goTo(cur+1); }); });
+
+        /* Mouse wheel (throttled) */
+        var wheelLock = false;
+        wrapper.addEventListener('wheel', function(e){
+            e.preventDefault();
+            if (wheelLock) return;
+            wheelLock = true;
+            setTimeout(function(){ wheelLock = false; }, 650);
+            goTo(e.deltaY > 0 ? cur+1 : cur-1);
+        }, { passive: false });
+
+        updateUI();
+    })();
+
+    /* ── dummy block so old gv-card script is replaced ── */
+    (function(){
+        var allCards = [];
 
         function pauseOthers(except) {
             allCards.forEach(function (c) {
@@ -1132,116 +1956,14 @@
             });
         }
 
-        allCards.forEach(function (card) {
-            if (card.id === 'gallery-carousel') return;
-            var video    = card.querySelector('video');
-            var btnPlay  = card.querySelector('.gv-playbtn');
-            var iconPlay = btnPlay.querySelector('.gv-icon-play');
-            var iconPause= btnPlay.querySelector('.gv-icon-pause');
-            var btnMute  = card.querySelector('.gv-btn-mute');
-            var iconOn   = btnMute.querySelector('.gv-icon-on');
-            var iconOff  = btnMute.querySelector('.gv-icon-off');
-            var track    = card.querySelector('.gv-progress-track');
-            var fill     = card.querySelector('.gv-progress-fill');
-            var srcLoaded= false;
-
-            /* Lazy load: carrega o src só quando o card entra na viewport */
-            function loadSrc() {
-                if (srcLoaded) return;
-                srcLoaded = true;
-                video.querySelectorAll('source[data-src]').forEach(function (s) {
-                    s.src = s.dataset.src;
-                });
-                video.load();
-            }
-            if ('IntersectionObserver' in window) {
-                var io = new IntersectionObserver(function (entries) {
-                    if (entries[0].isIntersecting) { loadSrc(); io.unobserve(card); }
-                }, { rootMargin: '300px 0px' });
-                io.observe(card);
-            }
-
-            /* Estado visual */
-            function setPlaying(playing) {
-                if (playing) {
-                    card.classList.add('gv-playing', 'gv-started');
-                    iconPlay.classList.add('hidden');
-                    iconPause.classList.remove('hidden');
-                } else {
-                    card.classList.remove('gv-playing');
-                    iconPlay.classList.remove('hidden');
-                    iconPause.classList.add('hidden');
-                }
-            }
-
-            /* Toggle play / pause */
-            function togglePlay() {
-                loadSrc();
-                if (video.paused) {
-                    pauseOthers(card);
-                    video.play().catch(function () {});
-                } else {
-                    video.pause();
-                }
-            }
-
-            /* Clique no card (overlay ou botão) */
-            card.addEventListener('click', function (e) {
-                if (btnMute.contains(e.target)) return;
-                togglePlay();
-            });
-
-            /* Eventos do vídeo */
-            video.addEventListener('play',  function () { setPlaying(true); });
-            video.addEventListener('pause', function () { setPlaying(false); });
-            video.addEventListener('ended', function () {
-                setPlaying(false);
-                fill.style.width = '0%';
-            });
-
-            /* Barra de progresso */
-            video.addEventListener('timeupdate', function () {
-                if (video.duration) {
-                    fill.style.width = (video.currentTime / video.duration * 100) + '%';
-                }
-            });
-            track.addEventListener('click', function (e) {
-                if (!video.duration) return;
-                var rect = track.getBoundingClientRect();
-                video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
-            });
-
-            /* Mute / Unmute */
-            btnMute.addEventListener('click', function (e) {
-                e.stopPropagation();
-                video.muted = !video.muted;
-                iconOn.classList.toggle('hidden',  video.muted);
-                iconOff.classList.toggle('hidden', !video.muted);
-            });
-        });
     })();
     </script>
 
-    <!-- Carrossel de vídeos — Clientes & Parceiros -->
+    <!-- carousel script removed — slider unificado acima -->
     <script>
     (function () {
         var wrap    = document.getElementById('gallery-carousel');
         if (!wrap) return;
-
-        var vids    = Array.from(wrap.querySelectorAll('.c-vid'));
-        var dots    = Array.from(wrap.querySelectorAll('.c-dot'));
-        var counter = wrap.querySelector('.c-counter');
-        var btnPrev = wrap.querySelector('.c-prev');
-        var btnNext = wrap.querySelector('.c-next');
-        var btnPlay = wrap.querySelector('.gv-playbtn');
-        var iPly    = btnPlay.querySelector('.gv-icon-play');
-        var iPau    = btnPlay.querySelector('.gv-icon-pause');
-        var btnMute = wrap.querySelector('.gv-btn-mute');
-        var iOn     = btnMute.querySelector('.gv-icon-on');
-        var iOff    = btnMute.querySelector('.gv-icon-off');
-        var track   = wrap.querySelector('.gv-progress-track');
-        var fill    = wrap.querySelector('.gv-progress-fill');
-
         var cur     = 0;
         var loaded  = {};
 
@@ -1364,6 +2086,25 @@
         } else {
             loadSlide(0);
         }
+    })();
+    </script>
+
+    <!-- Gallery Entrance Animation -->
+    <script>
+    (function () {
+        if (!('IntersectionObserver' in window)) {
+            document.querySelectorAll('.gv-reveal').forEach(function (el) { el.classList.add('in-view'); });
+            return;
+        }
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { rootMargin: '0px 0px -50px 0px', threshold: 0.04 });
+        document.querySelectorAll('.gv-reveal').forEach(function (el) { io.observe(el); });
     })();
     </script>
 
