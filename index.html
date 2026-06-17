@@ -44,43 +44,128 @@
         body { font-family: 'Poppins', sans-serif; }
         h1, h2, h3, h4, .font-serif { font-family: 'Cinzel', serif; }
         .lux-transition { transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        /* ── Gallery Slider ── */
-        .gs-slide {
-            position: absolute; inset: 0;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.75s ease;
-        }
+        /* ── Gallery Coverflow ── */
         .gs-wrapper {
-            aspect-ratio: 3 / 2;
-            min-height: 520px;
-            max-height: 88vh;
+            min-height: 720px;
+            background: #0B0A09;
+            isolation: isolate;
+            outline: none;
+        }
+        .gs-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 7% 16% 12%;
+            background: radial-gradient(circle at center, rgba(201,168,118,0.2) 0%, rgba(201,168,118,0.08) 28%, transparent 68%);
+            filter: blur(18px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .coverflow-stage {
+            height: min(76vh, 720px);
+            min-height: 640px;
+            perspective: 1450px;
+            transform-style: preserve-3d;
+            touch-action: pan-y;
+            cursor: grab;
+            user-select: none;
+        }
+        .coverflow-stage.is-dragging { cursor: grabbing; }
+        .gs-slide {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 338px;
+            aspect-ratio: 9 / 16;
+            overflow: hidden;
+            background: #050403;
+            border: 1px solid rgba(201,168,118,0.18);
+            box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+            opacity: var(--cf-opacity, 0);
+            filter: blur(var(--cf-blur, 0px)) brightness(var(--cf-brightness, 1)) saturate(var(--cf-saturation, 1));
+            transform: translate(-50%, -50%) translateX(var(--cf-x, 0px)) translateZ(var(--cf-z, 0px)) rotateY(var(--cf-rotate, 0deg)) scale(var(--cf-scale, 0.7));
+            transform-style: preserve-3d;
+            transition:
+                transform 0.7s cubic-bezier(.22,.61,.21,1),
+                opacity 0.7s cubic-bezier(.22,.61,.21,1),
+                filter 0.7s cubic-bezier(.22,.61,.21,1),
+                border-color 0.45s ease;
+            pointer-events: none;
+            z-index: var(--cf-zindex, 1);
+        }
+        .gs-slide.is-visible { pointer-events: auto; }
+        .gs-slide.gs-active {
+            border-color: rgba(201,168,118,0.46);
+            box-shadow: 0 38px 100px rgba(0,0,0,0.64), 0 0 0 1px rgba(244,240,232,0.08);
         }
         .gs-slide video {
-            object-fit: contain;
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             object-position: center;
             image-rendering: auto;
             transform: translateZ(0);
-            filter: contrast(1.03) saturate(1.04);
         }
-        .gs-slide.gs-active { opacity: 1; pointer-events: auto; }
         .gs-grad {
             background: linear-gradient(to top,
-                rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.12) 48%, transparent 100%);
+                rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.18) 45%, rgba(0,0,0,0.04) 100%);
         }
-        .gs-dot { transition: all 0.4s ease; }
-        .gs-dot.gs-dot-active { width: 1rem; background: rgba(255,255,255,0.95); }
-        .gs-arrow-prev:disabled, .gs-arrow-next:disabled { opacity: 0.18; pointer-events: none; }
-
-        /* Esconde botão central enquanto vídeo toca; reexibe só durante interação */
+        .gs-slide:not(.gs-active) .gv-playbtn,
+        .gs-slide:not(.gs-active) .gv-controls-bottom { opacity: 0; pointer-events: none; }
         .gs-slide.gv-playing .gv-playbtn { opacity: 0; pointer-events: none; transform: scale(0.96); }
-        .gs-slide.gv-playing.gv-user-active .gv-playbtn { opacity: 1; pointer-events: auto; transform: scale(1); }
+        .gs-slide.gv-playing.gv-user-active .gv-playbtn,
+        .gs-slide.gs-active:hover .gv-playbtn,
+        .gs-slide.gs-active:focus-within .gv-playbtn { opacity: 1; pointer-events: auto; transform: scale(1); }
+        .gs-dot {
+            height: 4px;
+            width: 7px;
+            border-radius: 999px;
+            background: rgba(244,240,232,0.26);
+            transition: width 0.35s ease, background-color 0.35s ease, transform 0.35s ease;
+        }
+        .gs-dot.gs-dot-active {
+            width: 26px;
+            background: #C9A876;
+        }
+        .gp-prev:focus-visible,
+        .gp-next:focus-visible,
+        .gs-arrow-prev:focus-visible,
+        .gs-arrow-next:focus-visible,
+        .gs-dot:focus-visible,
+        .gv-playbtn:focus-visible,
+        .gv-progress-track:focus-visible,
+        .gs-wrapper:focus-visible {
+            outline: 1px solid #C9A876;
+            outline-offset: 4px;
+        }
 
-        @media (max-width: 767px) {
-            .gs-wrapper {
-                aspect-ratio: 9 / 14;
-                min-height: min(620px, 78vh);
-                max-height: 78vh;
+        @media (max-width: 1023px) {
+            .gs-wrapper { min-height: 650px; }
+            .coverflow-stage {
+                height: min(72vh, 660px);
+                min-height: 590px;
             }
+            .gs-slide { width: min(300px, 44vw); }
+        }
+
+        @media (max-width: 639px) {
+            .gs-wrapper {
+                min-height: 610px;
+                overflow: visible;
+            }
+            .coverflow-stage {
+                height: min(72vh, 610px);
+                min-height: 520px;
+                cursor: grab;
+            }
+            .gs-slide { width: min(78vw, 320px); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .gs-slide,
+            .gs-dot,
+            .gv-playbtn,
+            .gv-progress-fill { transition: none !important; }
         }
 
         /* ── FAQ Accordion ── */
@@ -164,45 +249,12 @@
             }
         }
 
-        /* ── Gallery Video Players — Premium ── */
-        .gv-card { cursor: pointer; }
-        .gv-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border: 1px solid rgba(232, 216, 169, 0);
-            transition: border-color 0.6s ease;
-            pointer-events: none;
-            z-index: 5;
-        }
-        .gv-card:hover::after { border-color: rgba(232, 216, 169, 0.22); }
-        .gv-card video {
-            display: block; width: 100%; height: 100%; object-fit: cover;
-            transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .gv-card:hover video,
-        .gv-card.gv-playing video { transform: scale(1.05); }
-
-        .gv-overlay {
-            background: linear-gradient(180deg,
-                rgba(14,13,12,0.18) 0%,
-                rgba(14,13,12,0) 38%,
-                rgba(14,13,12,0.88) 100%);
-            transition: background 0.6s ease;
-            pointer-events: none;
-        }
-        .gv-card.gv-playing .gv-overlay {
-            background: linear-gradient(180deg,
-                rgba(14,13,12,0) 0%,
-                rgba(14,13,12,0) 52%,
-                rgba(14,13,12,0.72) 100%);
-        }
-
+        /* ── Gallery Video Controls — Premium ── */
         .gv-playbtn {
             width: 62px; height: 62px;
             border-radius: 50%;
-            border: 1.5px solid rgba(255,255,255,0.6);
-            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(244,240,232,0.58);
+            background: rgba(11,10,9,0.28);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
             display: flex; align-items: center; justify-content: center;
@@ -210,40 +262,28 @@
                         background-color 0.3s ease, border-color 0.3s ease;
         }
         .gv-playbtn:hover {
-            background: rgba(232,216,169,0.14);
-            border-color: rgba(232,216,169,0.85);
+            background: rgba(201,168,118,0.16);
+            border-color: rgba(201,168,118,0.9);
             transform: scale(1.1);
         }
-        .gv-card.gv-playing:not(:hover) .gv-playbtn { opacity: 0; pointer-events: none; }
-        .gv-card:hover .gv-playbtn { opacity: 1; pointer-events: auto; }
 
         .gv-label {
             display: flex; align-items: center; gap: 10px;
             font-size: 9px; letter-spacing: 0.2em; font-weight: 400;
-            color: rgba(255,255,255,0.85); text-transform: uppercase;
+            color: rgba(244,240,232,0.9); text-transform: uppercase;
             transition: opacity 0.35s ease;
         }
         .gv-label::before {
             content: ''; display: block; width: 18px; height: 1px;
-            background: #E8D8A9; flex-shrink: 0; opacity: 0.75;
-        }
-        .gv-card.gv-playing:not(:hover) .gv-label { opacity: 0.55; }
-
-        .gv-info-panel {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            padding: 52px 22px 20px;
-            background: linear-gradient(0deg, rgba(14,13,12,0.92) 0%, transparent 100%);
-            display: flex; flex-direction: column; gap: 14px;
-            z-index: 4;
+            background: #C9A876; flex-shrink: 0; opacity: 0.85;
         }
 
         .gv-controls-bottom {
-            opacity: 0;
+            opacity: 0.82;
             transition: opacity 0.35s ease;
         }
-        .gv-card.gv-playing .gv-controls-bottom { opacity: 0.75; }
-        .gv-card:hover .gv-controls-bottom { opacity: 1; }
-        .gv-card.gv-started:not(.gv-playing) .gv-controls-bottom { opacity: 1; }
+        .gs-slide.gs-active:hover .gv-controls-bottom,
+        .gs-slide.gs-active:focus-within .gv-controls-bottom { opacity: 1; }
 
         .gv-progress-track {
             position: relative;
@@ -257,16 +297,6 @@
         .gv-progress-fill {
             transition: width 0.12s linear;
         }
-
-        /* ── Carousel ── */
-        .c-vid { transition: opacity 0.6s ease; }
-        .c-prev, .c-next {
-            transition: background-color 0.25s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1);
-        }
-        .c-prev:hover, .c-next:hover { background: rgba(255,255,255,0.22) !important; transform: scale(1.1); }
-        .c-dot { transition: background-color 0.3s ease, transform 0.3s ease; }
-        .c-dot.active { background-color: rgba(255,255,255,1); transform: scale(1.3); }
-        #gallery-carousel .gv-controls-bottom { opacity: 1; }
 
         /* ── Gallery Entrance Animation ── */
         .gv-reveal {
@@ -891,7 +921,7 @@
     </section>
 
     <!-- 5. Inspire-se (Editorial Layout) -->
-    <section id="inspiracao" class="py-24 md:py-32 bg-[#0d0c0b] px-6 lg:px-12">
+    <section id="inspiracao" class="py-24 md:py-32 bg-[#0B0A09] px-6 lg:px-12">
         <div class="max-w-7xl mx-auto">
 
             <!-- Header Premium -->
@@ -909,11 +939,11 @@
                         </a>
                         <div class="w-px h-4 bg-white/15 hidden md:block"></div>
                         <div class="hidden md:flex items-center gap-3">
-                            <button class="gp-prev w-7 h-7 rounded-full border border-white/20 flex items-center justify-center text-white/40 hover:text-white hover:border-white/40 lux-transition" disabled aria-label="Página anterior">
+                            <button type="button" class="gp-prev w-7 h-7 rounded-full border border-white/20 flex items-center justify-center text-white/40 hover:text-white hover:border-brandSand/70 lux-transition" data-cf-prev aria-label="Vídeo anterior">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                             </button>
                             <span class="gp-counter text-white/30 text-[9px] tracking-[0.15em] font-light tabular-nums select-none">01 / 08</span>
-                            <button class="gp-next w-7 h-7 rounded-full border border-white/20 flex items-center justify-center text-white/40 hover:text-white hover:border-white/40 lux-transition" aria-label="Próxima página">
+                            <button type="button" class="gp-next w-7 h-7 rounded-full border border-white/20 flex items-center justify-center text-white/40 hover:text-white hover:border-brandSand/70 lux-transition" data-cf-next aria-label="Próximo vídeo">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                             </button>
                         </div>
@@ -922,12 +952,13 @@
                 <div class="mt-9 h-px bg-gradient-to-r from-brandSand/18 via-white/5 to-transparent"></div>
             </div>
 
-            <!-- Slider de Vídeo — 1 vídeo por vez, scroll ou seta para navegar -->
-            <div class="gs-wrapper relative w-full bg-[#080706] overflow-hidden">
+            <!-- Coverflow de Vídeo — vitrine em profundidade -->
+            <div class="gs-wrapper relative w-full overflow-hidden" data-coverflow tabindex="0" aria-roledescription="carrossel" aria-label="Galeria de vídeos de projetos da Ávila">
+                <div class="coverflow-stage relative" data-cf-stage>
 
                 <!-- Slide 01 — Salas de Estar -->
                 <div class="gs-slide gs-active">
-                    <video class="w-full h-full object-contain" preload="none" playsinline muted><source data-src="assets/video/gallery-sala.mp4" type="video/mp4"></video>
+                    <video class="w-full h-full object-cover" preload="metadata" playsinline muted loop><source src="assets/video/gallery-sala.mp4" type="video/mp4"></video>
                     <div class="gs-grad absolute inset-0 pointer-events-none"></div>
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:4">
                         <button class="gv-playbtn pointer-events-auto" aria-label="Reproduzir"><svg class="gv-icon-play w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="gv-icon-pause w-5 h-5 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
@@ -943,7 +974,7 @@
 
                 <!-- Slide 02 — Quartos Suíte -->
                 <div class="gs-slide">
-                    <video class="w-full h-full object-contain" preload="none" playsinline muted><source data-src="assets/video/gallery-quartos.mp4" type="video/mp4"></video>
+                    <video class="w-full h-full object-cover" preload="metadata" playsinline muted loop><source src="assets/video/gallery-quartos.mp4" type="video/mp4"></video>
                     <div class="gs-grad absolute inset-0 pointer-events-none"></div>
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:4">
                         <button class="gv-playbtn pointer-events-auto" aria-label="Reproduzir"><svg class="gv-icon-play w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="gv-icon-pause w-5 h-5 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
@@ -959,7 +990,7 @@
 
                 <!-- Slide 03 — Ambientes Comerciais -->
                 <div class="gs-slide">
-                    <video class="w-full h-full object-contain" preload="none" playsinline muted><source data-src="assets/video/gallery-piso.mp4" type="video/mp4"></video>
+                    <video class="w-full h-full object-cover" preload="metadata" playsinline muted loop><source src="assets/video/gallery-piso.mp4" type="video/mp4"></video>
                     <div class="gs-grad absolute inset-0 pointer-events-none"></div>
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:4">
                         <button class="gv-playbtn pointer-events-auto" aria-label="Reproduzir"><svg class="gv-icon-play w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="gv-icon-pause w-5 h-5 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
@@ -975,7 +1006,7 @@
 
                 <!-- Slide 04 — Clientes & Parceiros -->
                 <div class="gs-slide">
-                    <video class="w-full h-full object-contain" preload="none" playsinline muted><source data-src="assets/video/carousel-1.mp4" type="video/mp4"></video>
+                    <video class="w-full h-full object-cover" preload="metadata" playsinline muted loop><source src="assets/video/carousel-1.mp4" type="video/mp4"></video>
                     <div class="gs-grad absolute inset-0 pointer-events-none"></div>
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:4">
                         <button class="gv-playbtn pointer-events-auto" aria-label="Reproduzir"><svg class="gv-icon-play w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="gv-icon-pause w-5 h-5 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
@@ -991,7 +1022,7 @@
 
                 <!-- Slide 05 — Projetos Residenciais -->
                 <div class="gs-slide">
-                    <video class="w-full h-full object-contain" preload="none" playsinline muted><source data-src="assets/video/carousel-2.mp4" type="video/mp4"></video>
+                    <video class="w-full h-full object-cover" preload="metadata" playsinline muted loop><source src="assets/video/carousel-2.mp4" type="video/mp4"></video>
                     <div class="gs-grad absolute inset-0 pointer-events-none"></div>
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:4">
                         <button class="gv-playbtn pointer-events-auto" aria-label="Reproduzir"><svg class="gv-icon-play w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="gv-icon-pause w-5 h-5 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
@@ -1007,7 +1038,7 @@
 
                 <!-- Slide 06 — Espaços & Ambientes -->
                 <div class="gs-slide">
-                    <video class="w-full h-full object-contain" preload="none" playsinline muted><source data-src="assets/video/carousel-3.mp4" type="video/mp4"></video>
+                    <video class="w-full h-full object-cover" preload="metadata" playsinline muted loop><source src="assets/video/carousel-3.mp4" type="video/mp4"></video>
                     <div class="gs-grad absolute inset-0 pointer-events-none"></div>
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:4">
                         <button class="gv-playbtn pointer-events-auto" aria-label="Reproduzir"><svg class="gv-icon-play w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="gv-icon-pause w-5 h-5 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
@@ -1023,7 +1054,7 @@
 
                 <!-- Slide 07 — Detalhes & Acabamentos -->
                 <div class="gs-slide">
-                    <video class="w-full h-full object-contain" preload="none" playsinline muted><source data-src="assets/video/carousel-4.mp4" type="video/mp4"></video>
+                    <video class="w-full h-full object-cover" preload="metadata" playsinline muted loop><source src="assets/video/carousel-4.mp4" type="video/mp4"></video>
                     <div class="gs-grad absolute inset-0 pointer-events-none"></div>
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:4">
                         <button class="gv-playbtn pointer-events-auto" aria-label="Reproduzir"><svg class="gv-icon-play w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="gv-icon-pause w-5 h-5 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
@@ -1039,7 +1070,7 @@
 
                 <!-- Slide 08 — Transformações -->
                 <div class="gs-slide">
-                    <video class="w-full h-full object-contain" preload="none" playsinline muted><source data-src="assets/video/carousel-5.mp4" type="video/mp4"></video>
+                    <video class="w-full h-full object-cover" preload="metadata" playsinline muted loop><source src="assets/video/carousel-5.mp4" type="video/mp4"></video>
                     <div class="gs-grad absolute inset-0 pointer-events-none"></div>
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:4">
                         <button class="gv-playbtn pointer-events-auto" aria-label="Reproduzir"><svg class="gv-icon-play w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="gv-icon-pause w-5 h-5 text-white hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
@@ -1054,26 +1085,27 @@
                 </div>
 
                 <!-- Seta Esquerda -->
-                <button class="gs-arrow-prev absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-black/35 border border-white/20 flex items-center justify-center text-white/70 hover:bg-black/65 hover:border-white/45 hover:text-white lux-transition" aria-label="Vídeo anterior" disabled>
+                <button type="button" class="gs-arrow-prev absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-black/35 border border-white/20 flex items-center justify-center text-white/70 hover:bg-black/65 hover:border-brandSand/70 hover:text-white lux-transition" data-cf-prev aria-label="Vídeo anterior">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 </button>
                 <!-- Seta Direita -->
-                <button class="gs-arrow-next absolute right-3 md:right-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-black/35 border border-white/20 flex items-center justify-center text-white/70 hover:bg-black/65 hover:border-white/45 hover:text-white lux-transition" aria-label="Próximo vídeo">
+                <button type="button" class="gs-arrow-next absolute right-3 md:right-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-black/35 border border-white/20 flex items-center justify-center text-white/70 hover:bg-black/65 hover:border-brandSand/70 hover:text-white lux-transition" data-cf-next aria-label="Próximo vídeo">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </button>
 
                 <!-- Dots indicadores -->
-                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10 pointer-events-none">
-                    <span class="gs-dot gs-dot-active inline-block h-[3px] w-4 rounded-full bg-white/90"></span>
-                    <span class="gs-dot inline-block h-[3px] w-1.5 rounded-full bg-white/30"></span>
-                    <span class="gs-dot inline-block h-[3px] w-1.5 rounded-full bg-white/30"></span>
-                    <span class="gs-dot inline-block h-[3px] w-1.5 rounded-full bg-white/30"></span>
-                    <span class="gs-dot inline-block h-[3px] w-1.5 rounded-full bg-white/30"></span>
-                    <span class="gs-dot inline-block h-[3px] w-1.5 rounded-full bg-white/30"></span>
-                    <span class="gs-dot inline-block h-[3px] w-1.5 rounded-full bg-white/30"></span>
-                    <span class="gs-dot inline-block h-[3px] w-1.5 rounded-full bg-white/30"></span>
+                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+                    <button type="button" class="gs-dot gs-dot-active" data-cf-dot aria-label="Abrir vídeo 1 de 8" aria-current="true"><span class="sr-only">Vídeo 1</span></button>
+                    <button type="button" class="gs-dot" data-cf-dot aria-label="Abrir vídeo 2 de 8"><span class="sr-only">Vídeo 2</span></button>
+                    <button type="button" class="gs-dot" data-cf-dot aria-label="Abrir vídeo 3 de 8"><span class="sr-only">Vídeo 3</span></button>
+                    <button type="button" class="gs-dot" data-cf-dot aria-label="Abrir vídeo 4 de 8"><span class="sr-only">Vídeo 4</span></button>
+                    <button type="button" class="gs-dot" data-cf-dot aria-label="Abrir vídeo 5 de 8"><span class="sr-only">Vídeo 5</span></button>
+                    <button type="button" class="gs-dot" data-cf-dot aria-label="Abrir vídeo 6 de 8"><span class="sr-only">Vídeo 6</span></button>
+                    <button type="button" class="gs-dot" data-cf-dot aria-label="Abrir vídeo 7 de 8"><span class="sr-only">Vídeo 7</span></button>
+                    <button type="button" class="gs-dot" data-cf-dot aria-label="Abrir vídeo 8 de 8"><span class="sr-only">Vídeo 8</span></button>
                 </div>
 
+                </div>
             </div>
 
         </div>
@@ -1879,10 +1911,10 @@
     })();
     </script>
 
-    <!-- Gallery Slider — navegação, play individual, scroll do mouse -->
+    <!-- Gallery Slider legado desativado; coverflow inicializado abaixo -->
     <script>
     (function () {
-        var wrapper = document.querySelector('.gs-wrapper');
+        var wrapper = document.querySelector('[data-gallery-legacy-disabled]');
         if (!wrapper) return;
 
         var slides   = Array.from(wrapper.querySelectorAll('.gs-slide'));
@@ -2172,6 +2204,348 @@
         } else {
             loadSlide(0);
         }
+    })();
+    </script>
+
+    <!-- Gallery Coverflow — profundidade, swipe, teclado e reprodução ativa -->
+    <script>
+    (function () {
+        var wrapper = document.querySelector('[data-coverflow]');
+        if (!wrapper) return;
+
+        var stage = wrapper.querySelector('[data-cf-stage]');
+        var slides = Array.prototype.slice.call(wrapper.querySelectorAll('.gs-slide'));
+        var videos = slides.map(function (slide) { return slide.querySelector('video'); });
+        var dots = Array.prototype.slice.call(wrapper.querySelectorAll('[data-cf-dot]'));
+        var counters = Array.prototype.slice.call(document.querySelectorAll('.gp-counter'));
+        var prevButtons = Array.prototype.slice.call(document.querySelectorAll('[data-cf-prev]'));
+        var nextButtons = Array.prototype.slice.call(document.querySelectorAll('[data-cf-next]'));
+        var total = slides.length;
+        var active = 0;
+        var shouldPlayActive = true;
+        var inView = false;
+        var lastPointerDelta = 0;
+
+        function pad(value) {
+            return String(value).padStart(2, '0');
+        }
+
+        function wrappedIndex(index) {
+            return (index + total) % total;
+        }
+
+        function offsetFromActive(index) {
+            var offset = index - active;
+            if (offset > total / 2) offset -= total;
+            if (offset < -total / 2) offset += total;
+            return offset;
+        }
+
+        function visibleRange() {
+            if (window.innerWidth < 640) return 0;
+            if (window.innerWidth < 1024) return 1;
+            return 2;
+        }
+
+        function metricsFor(offset) {
+            var abs = Math.abs(offset);
+            var range = visibleRange();
+            var isMobile = window.innerWidth < 640;
+            var spacing = window.innerWidth < 1024 ? 214 : 262;
+            var visible = abs <= range;
+
+            if (isMobile && abs > 0) visible = false;
+
+            return {
+                visible: visible,
+                x: isMobile ? 0 : offset * spacing,
+                z: abs === 0 ? 80 : -120 * abs,
+                rotate: abs === 0 ? 0 : (offset < 0 ? 20 : -20),
+                scale: abs === 0 ? 1 : (abs === 1 ? 0.74 : 0.56),
+                opacity: !visible ? 0 : (abs === 0 ? 1 : (abs === 1 ? 0.58 : 0.32)),
+                blur: abs === 0 ? 0 : (abs === 1 ? 1.2 : 2.4),
+                brightness: abs === 0 ? 1 : (abs === 1 ? 0.62 : 0.42),
+                saturation: abs === 0 ? 1.04 : 0.82,
+                zIndex: 100 - abs
+            };
+        }
+
+        function setPlayState(slide, playing) {
+            var play = slide.querySelector('.gv-icon-play');
+            var pause = slide.querySelector('.gv-icon-pause');
+            var button = slide.querySelector('.gv-playbtn');
+            slide.classList.toggle('gv-playing', playing);
+            if (play) play.classList.toggle('hidden', playing);
+            if (pause) pause.classList.toggle('hidden', !playing);
+            if (button) button.setAttribute('aria-label', playing ? 'Pausar vídeo ativo' : 'Reproduzir vídeo ativo');
+        }
+
+        function pauseVideo(video, reset) {
+            if (!video) return;
+            video.pause();
+            if (reset && video.readyState > 0) {
+                try { video.currentTime = 0; } catch (e) {}
+            }
+        }
+
+        function pauseAllExcept(index) {
+            videos.forEach(function (video, videoIndex) {
+                if (videoIndex === index) return;
+                pauseVideo(video, true);
+                setPlayState(slides[videoIndex], false);
+            });
+        }
+
+        function playActive() {
+            var video = videos[active];
+            if (!video || !inView || !shouldPlayActive) return;
+            video.muted = true;
+            video.loop = true;
+            video.playsInline = true;
+            video.play().then(function () {
+                setPlayState(slides[active], true);
+            }).catch(function () {
+                setPlayState(slides[active], false);
+            });
+        }
+
+        function updateControls() {
+            var label = pad(active + 1) + ' / ' + pad(total);
+            counters.forEach(function (counter) { counter.textContent = label; });
+            dots.forEach(function (dot, index) {
+                var current = index === active;
+                dot.classList.toggle('gs-dot-active', current);
+                dot.setAttribute('aria-current', current ? 'true' : 'false');
+            });
+        }
+
+        function render() {
+            slides.forEach(function (slide, index) {
+                var offset = offsetFromActive(index);
+                var metric = metricsFor(offset);
+                var isActive = index === active;
+
+                slide.style.setProperty('--cf-x', metric.x + 'px');
+                slide.style.setProperty('--cf-z', metric.z + 'px');
+                slide.style.setProperty('--cf-rotate', metric.rotate + 'deg');
+                slide.style.setProperty('--cf-scale', metric.scale);
+                slide.style.setProperty('--cf-opacity', metric.opacity);
+                slide.style.setProperty('--cf-blur', metric.blur + 'px');
+                slide.style.setProperty('--cf-brightness', metric.brightness);
+                slide.style.setProperty('--cf-saturation', metric.saturation);
+                slide.style.setProperty('--cf-zindex', metric.zIndex);
+                slide.classList.toggle('gs-active', isActive);
+                slide.classList.toggle('is-visible', metric.visible);
+                var slideLabel = slide.querySelector('.gv-label');
+                slide.setAttribute('role', 'group');
+                slide.setAttribute('aria-label', (isActive ? 'Vídeo ativo: ' : 'Abrir vídeo: ') + (slideLabel ? slideLabel.textContent : 'Projeto Ávila'));
+                slide.setAttribute('aria-hidden', metric.visible ? 'false' : 'true');
+                slide.setAttribute('aria-current', isActive ? 'true' : 'false');
+                slide.setAttribute('tabindex', metric.visible ? '0' : '-1');
+                slide.querySelectorAll('.gv-playbtn, .gv-btn-mute, .gv-progress-track').forEach(function (control) {
+                    control.setAttribute('tabindex', isActive ? '0' : '-1');
+                    if (control.tagName === 'BUTTON') control.disabled = !isActive;
+                });
+            });
+
+            updateControls();
+        }
+
+        function goTo(index, playAfterMove) {
+            active = wrappedIndex(index);
+            if (playAfterMove !== false) shouldPlayActive = true;
+            pauseAllExcept(active);
+            render();
+            playActive();
+        }
+
+        function toggleActivePlay() {
+            var video = videos[active];
+            if (!video) return;
+            if (video.paused) {
+                shouldPlayActive = true;
+                playActive();
+            } else {
+                shouldPlayActive = false;
+                pauseVideo(video, false);
+                setPlayState(slides[active], false);
+            }
+        }
+
+        function showActiveInteraction() {
+            slides[active].classList.add('gv-user-active');
+            window.clearTimeout(showActiveInteraction.timer);
+            showActiveInteraction.timer = window.setTimeout(function () {
+                slides[active].classList.remove('gv-user-active');
+            }, 950);
+        }
+
+        videos.forEach(function (video, index) {
+            if (!video) return;
+            video.muted = true;
+            video.loop = true;
+            video.playsInline = true;
+            video.preload = 'metadata';
+
+            video.addEventListener('play', function () {
+                if (index === active) setPlayState(slides[index], true);
+            });
+            video.addEventListener('pause', function () {
+                if (index === active) setPlayState(slides[index], false);
+            });
+            video.addEventListener('timeupdate', function () {
+                var fill = slides[index].querySelector('.gv-progress-fill');
+                if (!fill || index !== active || !video.duration) return;
+                fill.style.width = (video.currentTime / video.duration * 100) + '%';
+            });
+        });
+
+        slides.forEach(function (slide, index) {
+            var playButton = slide.querySelector('.gv-playbtn');
+            var muteButton = slide.querySelector('.gv-btn-mute');
+            var progressTrack = slide.querySelector('.gv-progress-track');
+
+            slide.addEventListener('click', function (event) {
+                if (Math.abs(lastPointerDelta) > 8) return;
+                if (playButton && playButton.contains(event.target)) return;
+                if (muteButton && muteButton.contains(event.target)) return;
+                if (progressTrack && progressTrack.contains(event.target)) return;
+                if (index !== active) {
+                    goTo(index, true);
+                } else {
+                    toggleActivePlay();
+                }
+            });
+
+            slide.addEventListener('keydown', function (event) {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                event.preventDefault();
+                if (index !== active) {
+                    goTo(index, true);
+                } else {
+                    toggleActivePlay();
+                }
+            });
+
+            if (playButton) {
+                playButton.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    if (index !== active) {
+                        goTo(index, true);
+                    } else {
+                        toggleActivePlay();
+                    }
+                });
+            }
+
+            if (muteButton) {
+                muteButton.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    var video = videos[active];
+                    if (!video) return;
+                    video.muted = !video.muted;
+                    videos.forEach(function (item) { if (item) item.muted = video.muted; });
+                    document.querySelectorAll('.gv-icon-on').forEach(function (icon) { icon.classList.toggle('hidden', video.muted); });
+                    document.querySelectorAll('.gv-icon-off').forEach(function (icon) { icon.classList.toggle('hidden', !video.muted); });
+                });
+            }
+
+            if (progressTrack) {
+                progressTrack.setAttribute('tabindex', '0');
+                progressTrack.setAttribute('role', 'slider');
+                progressTrack.setAttribute('aria-label', 'Progresso do vídeo ativo');
+                progressTrack.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    if (index !== active) return;
+                    var video = videos[active];
+                    if (!video || !video.duration) return;
+                    var rect = progressTrack.getBoundingClientRect();
+                    video.currentTime = ((event.clientX - rect.left) / rect.width) * video.duration;
+                });
+            }
+
+            slide.addEventListener('pointermove', function () {
+                if (index === active) showActiveInteraction();
+            });
+        });
+
+        dots.forEach(function (dot, index) {
+            dot.addEventListener('click', function () { goTo(index, true); });
+        });
+
+        prevButtons.forEach(function (button) {
+            button.addEventListener('click', function () { goTo(active - 1, true); });
+        });
+
+        nextButtons.forEach(function (button) {
+            button.addEventListener('click', function () { goTo(active + 1, true); });
+        });
+
+        wrapper.addEventListener('keydown', function (event) {
+            if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                goTo(active - 1, true);
+            }
+            if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                goTo(active + 1, true);
+            }
+        });
+
+        var pointerStartX = 0;
+        var pointerStartY = 0;
+        var dragging = false;
+
+        stage.addEventListener('pointerdown', function (event) {
+            pointerStartX = event.clientX;
+            pointerStartY = event.clientY;
+            lastPointerDelta = 0;
+            dragging = true;
+            stage.classList.add('is-dragging');
+            stage.setPointerCapture(event.pointerId);
+        });
+
+        stage.addEventListener('pointermove', function (event) {
+            if (!dragging) return;
+            lastPointerDelta = event.clientX - pointerStartX;
+        });
+
+        stage.addEventListener('pointerup', function (event) {
+            if (!dragging) return;
+            dragging = false;
+            stage.classList.remove('is-dragging');
+            var deltaX = event.clientX - pointerStartX;
+            var deltaY = event.clientY - pointerStartY;
+            if (Math.abs(deltaX) > 44 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                goTo(deltaX < 0 ? active + 1 : active - 1, true);
+            }
+            window.setTimeout(function () { lastPointerDelta = 0; }, 0);
+        });
+
+        stage.addEventListener('pointercancel', function () {
+            dragging = false;
+            stage.classList.remove('is-dragging');
+            lastPointerDelta = 0;
+        });
+
+        window.addEventListener('resize', function () { render(); });
+
+        if ('IntersectionObserver' in window) {
+            var io = new IntersectionObserver(function (entries) {
+                inView = entries[0].isIntersecting;
+                if (inView) {
+                    playActive();
+                } else {
+                    pauseAllExcept(-1);
+                }
+            }, { threshold: 0.24 });
+            io.observe(wrapper);
+        } else {
+            inView = true;
+        }
+
+        render();
+        playActive();
     })();
     </script>
 
