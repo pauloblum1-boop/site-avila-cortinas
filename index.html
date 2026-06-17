@@ -127,6 +127,10 @@
             width: 26px;
             background: #C9A876;
         }
+        .gs-arrow-prev,
+        .gs-arrow-next {
+            z-index: 160;
+        }
         .gp-prev:focus-visible,
         .gp-next:focus-visible,
         .gs-arrow-prev:focus-visible,
@@ -1085,16 +1089,16 @@
                 </div>
 
                 <!-- Seta Esquerda -->
-                <button type="button" class="gs-arrow-prev absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-black/35 border border-white/20 flex items-center justify-center text-white/70 hover:bg-black/65 hover:border-brandSand/70 hover:text-white lux-transition" data-cf-prev aria-label="Vídeo anterior">
+                <button type="button" class="gs-arrow-prev absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-[170] w-11 h-11 rounded-full bg-black/35 border border-white/20 flex items-center justify-center text-white/70 hover:bg-black/65 hover:border-brandSand/70 hover:text-white lux-transition" data-cf-prev aria-label="Vídeo anterior">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 </button>
                 <!-- Seta Direita -->
-                <button type="button" class="gs-arrow-next absolute right-3 md:right-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-black/35 border border-white/20 flex items-center justify-center text-white/70 hover:bg-black/65 hover:border-brandSand/70 hover:text-white lux-transition" data-cf-next aria-label="Próximo vídeo">
+                <button type="button" class="gs-arrow-next absolute right-3 md:right-5 top-1/2 -translate-y-1/2 z-[170] w-11 h-11 rounded-full bg-black/35 border border-white/20 flex items-center justify-center text-white/70 hover:bg-black/65 hover:border-brandSand/70 hover:text-white lux-transition" data-cf-next aria-label="Próximo vídeo">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </button>
 
                 <!-- Dots indicadores -->
-                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-[170]">
                     <button type="button" class="gs-dot gs-dot-active" data-cf-dot aria-label="Abrir vídeo 1 de 8" aria-current="true"><span class="sr-only">Vídeo 1</span></button>
                     <button type="button" class="gs-dot" data-cf-dot aria-label="Abrir vídeo 2 de 8"><span class="sr-only">Vídeo 2</span></button>
                     <button type="button" class="gs-dot" data-cf-dot aria-label="Abrir vídeo 3 de 8"><span class="sr-only">Vídeo 3</span></button>
@@ -2225,6 +2229,7 @@
         var shouldPlayActive = true;
         var inView = false;
         var lastPointerDelta = 0;
+        var mutedBySlide = videos.map(function () { return true; });
 
         function pad(value) {
             return String(value).padStart(2, '0');
@@ -2280,6 +2285,23 @@
             if (button) button.setAttribute('aria-label', playing ? 'Pausar vídeo ativo' : 'Reproduzir vídeo ativo');
         }
 
+        function setMuteState(index, muted) {
+            var video = videos[index];
+            var slide = slides[index];
+            if (!video || !slide) return;
+
+            mutedBySlide[index] = muted;
+            video.muted = muted;
+
+            var button = slide.querySelector('.gv-btn-mute');
+            var iconOn = slide.querySelector('.gv-icon-on');
+            var iconOff = slide.querySelector('.gv-icon-off');
+
+            if (button) button.setAttribute('aria-label', muted ? 'Ativar som deste vídeo' : 'Desativar som deste vídeo');
+            if (iconOn) iconOn.classList.toggle('hidden', muted);
+            if (iconOff) iconOff.classList.toggle('hidden', !muted);
+        }
+
         function pauseVideo(video, reset) {
             if (!video) return;
             video.pause();
@@ -2299,7 +2321,7 @@
         function playActive() {
             var video = videos[active];
             if (!video || !inView || !shouldPlayActive) return;
-            video.muted = true;
+            video.muted = mutedBySlide[active];
             video.loop = true;
             video.playsInline = true;
             video.play().then(function () {
@@ -2346,6 +2368,7 @@
                     control.setAttribute('tabindex', isActive ? '0' : '-1');
                     if (control.tagName === 'BUTTON') control.disabled = !isActive;
                 });
+                setMuteState(index, mutedBySlide[index]);
             });
 
             updateControls();
@@ -2382,7 +2405,7 @@
 
         videos.forEach(function (video, index) {
             if (!video) return;
-            video.muted = true;
+            video.muted = mutedBySlide[index];
             video.loop = true;
             video.playsInline = true;
             video.preload = 'metadata';
@@ -2441,12 +2464,13 @@
             if (muteButton) {
                 muteButton.addEventListener('click', function (event) {
                     event.stopPropagation();
-                    var video = videos[active];
+                    var video = videos[index];
                     if (!video) return;
-                    video.muted = !video.muted;
-                    videos.forEach(function (item) { if (item) item.muted = video.muted; });
-                    document.querySelectorAll('.gv-icon-on').forEach(function (icon) { icon.classList.toggle('hidden', video.muted); });
-                    document.querySelectorAll('.gv-icon-off').forEach(function (icon) { icon.classList.toggle('hidden', !video.muted); });
+                    if (index !== active) {
+                        goTo(index, true);
+                        return;
+                    }
+                    setMuteState(index, !video.muted);
                 });
             }
 
@@ -2470,15 +2494,24 @@
         });
 
         dots.forEach(function (dot, index) {
+            dot.addEventListener('pointerdown', function (event) { event.stopPropagation(); });
             dot.addEventListener('click', function () { goTo(index, true); });
         });
 
         prevButtons.forEach(function (button) {
-            button.addEventListener('click', function () { goTo(active - 1, true); });
+            button.addEventListener('pointerdown', function (event) { event.stopPropagation(); });
+            button.addEventListener('click', function (event) {
+                event.stopPropagation();
+                goTo(active - 1, true);
+            });
         });
 
         nextButtons.forEach(function (button) {
-            button.addEventListener('click', function () { goTo(active + 1, true); });
+            button.addEventListener('pointerdown', function (event) { event.stopPropagation(); });
+            button.addEventListener('click', function (event) {
+                event.stopPropagation();
+                goTo(active + 1, true);
+            });
         });
 
         wrapper.addEventListener('keydown', function (event) {
@@ -2497,6 +2530,7 @@
         var dragging = false;
 
         stage.addEventListener('pointerdown', function (event) {
+            if (event.target.closest('[data-cf-prev], [data-cf-next], [data-cf-dot], .gv-btn-mute, .gv-playbtn, .gv-progress-track')) return;
             pointerStartX = event.clientX;
             pointerStartY = event.clientY;
             lastPointerDelta = 0;
