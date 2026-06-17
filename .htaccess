@@ -1,35 +1,28 @@
-# ============================================================
-# Ávila Cortinas e Persianas — .htaccess
+﻿# ============================================================
+# Avila Cortinas e Persianas - .htaccess
 # ============================================================
 
 Options -Indexes
 
 # ------------------------------------------------------------
-# 1) FORÇAR HTTPS (301)
+# 1) Dominio canonico e HTTPS (301)
+#    Destino oficial: https://www.cortinasavila.com.br
 # ------------------------------------------------------------
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Redireciona HTTP → HTTPS
-    RewriteCond %{HTTPS} off
-    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
-
-# ------------------------------------------------------------
-# 2) PADRONIZAR DOMÍNIO: www → não-www (301)
-# ------------------------------------------------------------
-
-    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-    RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
+    RewriteCond %{HTTPS} off [OR]
+    RewriteCond %{HTTP_HOST} !^www\.cortinasavila\.com\.br$ [NC]
+    RewriteRule ^ https://www.cortinasavila.com.br%{REQUEST_URI} [R=301,L]
 </IfModule>
-
 # ------------------------------------------------------------
-# 3) PÁGINA 404 PERSONALIZADA
-#    (retorna à home — site one page)
+# 3) PÃGINA 404 PERSONALIZADA
+#    (retorna Ã  home â€” site one page)
 # ------------------------------------------------------------
 ErrorDocument 404 /index.html
 
 # ------------------------------------------------------------
-# 4) COMPRESSÃO GZIP (mod_deflate)
+# 4) COMPRESSÃƒO GZIP (mod_deflate)
 # ------------------------------------------------------------
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/html
@@ -48,27 +41,27 @@ ErrorDocument 404 /index.html
 <IfModule mod_expires.c>
     ExpiresActive On
 
-    # HTML — sem cache (atualizações refletem imediatamente)
+    # HTML â€” sem cache (atualizaÃ§Ãµes refletem imediatamente)
     <FilesMatch "\.(html|htm)$">
         ExpiresDefault "access plus 0 seconds"
         Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
         Header set Pragma "no-cache"
     </FilesMatch>
 
-    # Imagens e mídias — 1 mês
+    # Imagens e mÃ­dias â€” 1 mÃªs
     <FilesMatch "\.(jpg|jpeg|png|webp|gif|ico|svg|mp4|webm)$">
         ExpiresDefault "access plus 1 month"
         Header set Cache-Control "public, max-age=2592000"
     </FilesMatch>
 
-    # CSS e JS — sem cache (atualizações refletem imediatamente)
+    # CSS e JS â€” sem cache (atualizaÃ§Ãµes refletem imediatamente)
     <FilesMatch "\.(css|js)$">
         ExpiresDefault "access plus 0 seconds"
         Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
         Header set Pragma "no-cache"
     </FilesMatch>
 
-    # Fontes — 1 mês
+    # Fontes â€” 1 mÃªs
     <FilesMatch "\.(woff|woff2|ttf|otf|eot)$">
         ExpiresDefault "access plus 1 month"
         Header set Cache-Control "public, max-age=2592000"
