@@ -131,6 +131,39 @@
         .video-wrapper video { cursor: pointer; display: block; }
         .video-overlay { transition: opacity 0.4s ease; }
 
+        /* ── Store Gallery ── */
+        .store-gallery-frame {
+            aspect-ratio: 16 / 10;
+            min-height: 360px;
+        }
+        .store-gallery-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: scale(1.015);
+        }
+        .store-gallery-slide.store-gallery-active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
+        .store-gallery-arrow {
+            transition: border-color 0.35s ease, color 0.35s ease,
+                        background-color 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .store-gallery-arrow:hover {
+            transform: translateY(-1px);
+        }
+        @media (max-width: 767px) {
+            .store-gallery-frame {
+                aspect-ratio: 4 / 5;
+                min-height: min(560px, 72vh);
+            }
+        }
+
         /* ── Gallery Video Players — Premium ── */
         .gv-card { cursor: pointer; }
         .gv-card::after {
@@ -804,7 +837,60 @@
         </div>
     </section>
 
-    <!-- 4. Inspire-se (Editorial Layout) -->
+    <!-- 4. Loja Ávila — Galeria do Showroom -->
+    <section id="loja" class="py-24 md:py-32 bg-[#12100F] px-6 lg:px-12 overflow-hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-[0.88fr_1.35fr] gap-12 lg:gap-20 items-center">
+                <div class="text-white">
+                    <p class="text-brandSand/55 text-[9px] uppercase tracking-[0.28em] font-light mb-5">— Showroom Ávila</p>
+                    <h2 class="text-3xl md:text-5xl font-serif text-white mb-6 leading-tight">Conheça a loja por dentro</h2>
+                    <p class="font-light text-white/45 text-sm md:text-base leading-relaxed max-w-md mb-9">Um olhar para os detalhes, texturas e ambientes que recebem nossos clientes em Criciúma. A experiência começa no showroom, com curadoria próxima e materiais à mão.</p>
+                    <div class="flex items-center gap-6 text-[10px] uppercase tracking-[0.2em] text-white/35">
+                        <span class="text-brandSand">12 fotos</span>
+                        <span class="w-px h-4 bg-white/15"></span>
+                        <span>Criciúma / SC</span>
+                    </div>
+                </div>
+
+                <div class="store-gallery relative" data-store-gallery>
+                    <div class="store-gallery-frame relative w-full overflow-hidden bg-[#080706] shadow-2xl">
+                        <img src="assets/img/loja/loj12.jpg" alt="Foto 12 do showroom da Ávila Cortinas e Persianas em Criciúma" class="store-gallery-slide store-gallery-active w-full h-full object-cover" loading="lazy" data-store-number="12">
+                        <img src="assets/img/loja/loj11.jpg" alt="Foto 11 do showroom da Ávila Cortinas e Persianas em Criciúma" class="store-gallery-slide w-full h-full object-cover" loading="lazy" data-store-number="11">
+                        <img src="assets/img/loja/loj10.jpg" alt="Foto 10 do showroom da Ávila Cortinas e Persianas em Criciúma" class="store-gallery-slide w-full h-full object-cover" loading="lazy" data-store-number="10">
+                        <img src="assets/img/loja/loj9.jpg" alt="Foto 9 do showroom da Ávila Cortinas e Persianas em Criciúma" class="store-gallery-slide w-full h-full object-cover" loading="lazy" data-store-number="9">
+                        <img src="assets/img/loja/loj8.jpg" alt="Foto 8 do showroom da Ávila Cortinas e Persianas em Criciúma" class="store-gallery-slide w-full h-full object-cover" loading="lazy" data-store-number="8">
+                        <img src="assets/img/loja/loj7.jpg" alt="Foto 7 do showroom da Ávila Cortinas e Persianas em Criciúma" class="store-gallery-slide w-full h-full object-cover" loading="lazy" data-store-number="7">
+                        <img src="assets/img/loja/loj6.jpg" alt="Foto 6 do showroom da Ávila Cortinas e Persianas em Criciúma" class="store-gallery-slide w-full h-full object-cover" loading="lazy" data-store-number="6">
+                        <img src="assets/img/loja/loj5.jpg" alt="Foto 5 do showroom da Ávila Cortinas e Persianas em Criciúma" class="store-gallery-slide w-full h-full object-cover" loading="lazy" data-store-number="5">
+                        <img src="assets/img/loja/loj4.jpg" alt="Foto 4 do showroom da Ávila Cortinas e Persianas em Criciúma" class="store-gallery-slide w-full h-full object-cover" loading="lazy" data-store-number="4">
+                        <img src="assets/img/loja/loj3.jpg" alt="Foto 3 do showroom da Ávila Cortinas e Persianas em Criciúma" class="store-gallery-slide w-full h-full object-cover" loading="lazy" data-store-number="3">
+                        <img src="assets/img/loja/loj2.jpg" alt="Foto 2 do showroom da Ávila Cortinas e Persianas em Criciúma" class="store-gallery-slide w-full h-full object-cover" loading="lazy" data-store-number="2">
+                        <img src="assets/img/loja/loj1.jpg" alt="Foto 1 do showroom da Ávila Cortinas e Persianas em Criciúma" class="store-gallery-slide w-full h-full object-cover" loading="lazy" data-store-number="1">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent pointer-events-none"></div>
+                        <div class="absolute left-5 bottom-5 md:left-8 md:bottom-8">
+                            <p class="text-brandSand text-[9px] uppercase tracking-[0.24em] mb-2">Ambiente da loja</p>
+                            <p class="text-white/70 font-light text-sm" data-store-label>Showroom Ávila - foto 12</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-7 flex items-center justify-between gap-5">
+                        <div class="h-px flex-1 bg-gradient-to-r from-brandSand/30 via-white/10 to-transparent"></div>
+                        <div class="flex items-center gap-4">
+                            <button type="button" class="store-gallery-arrow w-9 h-9 rounded-full border border-white/20 text-white/45 hover:text-white hover:border-brandSand/70 hover:bg-white/5 flex items-center justify-center" aria-label="Foto anterior da loja" data-store-prev>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M15 19l-7-7 7-7"/></svg>
+                            </button>
+                            <span class="text-white/35 text-[10px] tracking-[0.18em] tabular-nums select-none min-w-[4.5rem] text-center" data-store-counter>12 / 12</span>
+                            <button type="button" class="store-gallery-arrow w-9 h-9 rounded-full border border-white/20 text-white/45 hover:text-white hover:border-brandSand/70 hover:bg-white/5 flex items-center justify-center" aria-label="Próxima foto da loja" data-store-next>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M9 5l7 7-7 7"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Inspire-se (Editorial Layout) -->
     <section id="inspiracao" class="py-24 md:py-32 bg-[#0d0c0b] px-6 lg:px-12">
         <div class="max-w-7xl mx-auto">
 
@@ -2086,6 +2172,39 @@
         } else {
             loadSlide(0);
         }
+    })();
+    </script>
+
+    <!-- Store Gallery -->
+    <script>
+    (function () {
+        var gallery = document.querySelector('[data-store-gallery]');
+        if (!gallery) return;
+
+        var slides = Array.prototype.slice.call(gallery.querySelectorAll('.store-gallery-slide'));
+        var prev = gallery.querySelector('[data-store-prev]');
+        var next = gallery.querySelector('[data-store-next]');
+        var counter = gallery.querySelector('[data-store-counter]');
+        var label = gallery.querySelector('[data-store-label]');
+        var current = 0;
+
+        function show(index) {
+            current = (index + slides.length) % slides.length;
+            slides.forEach(function (slide, slideIndex) {
+                var active = slideIndex === current;
+                slide.classList.toggle('store-gallery-active', active);
+                slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+            });
+
+            var number = slides[current].getAttribute('data-store-number') || '';
+            if (counter) counter.textContent = number.padStart(2, '0') + ' / 12';
+            if (label) label.textContent = 'Showroom Ávila - foto ' + number;
+        }
+
+        if (prev) prev.addEventListener('click', function () { show(current - 1); });
+        if (next) next.addEventListener('click', function () { show(current + 1); });
+
+        show(0);
     })();
     </script>
 
