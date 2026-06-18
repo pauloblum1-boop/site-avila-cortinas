@@ -44,6 +44,15 @@
         body { font-family: 'Poppins', sans-serif; }
         h1, h2, h3, h4, .font-serif { font-family: 'Cinzel', serif; }
         .lux-transition { transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        #colecoes,
+        #processo,
+        #showroom,
+        #inspiracao,
+        #consultoras,
+        #visita-showroom,
+        #faq {
+            scroll-margin-top: 5rem;
+        }
         /* ── Gallery Coverflow ── */
         .gs-wrapper {
             min-height: 720px;
@@ -246,10 +255,39 @@
         .store-gallery-arrow:hover {
             transform: translateY(-1px);
         }
+        .store-gallery-nav {
+            min-width: 11rem;
+        }
+        @media (max-width: 1023px) {
+            .store-gallery-controls {
+                margin-top: 1rem;
+                justify-content: center !important;
+            }
+            .store-gallery-rule {
+                display: none !important;
+            }
+            .store-gallery-nav {
+                min-width: auto;
+                gap: 0.75rem !important;
+            }
+        }
         @media (max-width: 767px) {
+            #showroom {
+                scroll-margin-top: 4.25rem;
+            }
             .store-gallery-frame {
-                aspect-ratio: 4 / 5;
-                min-height: min(560px, 72vh);
+                aspect-ratio: 4 / 3;
+                min-height: 0;
+                max-height: 52vh;
+            }
+            .store-gallery-frame .absolute.left-5 {
+                left: 1rem;
+                right: 1rem;
+                bottom: 1rem;
+            }
+            .store-gallery-arrow {
+                width: 2.75rem !important;
+                height: 2.75rem !important;
             }
         }
 
@@ -872,7 +910,7 @@
     </section>
 
     <!-- 4. Loja Ávila — Galeria do Showroom -->
-    <section id="showroom" class="py-24 md:py-32 bg-[#12100F] px-6 lg:px-12 overflow-hidden">
+    <section id="showroom" class="py-16 sm:py-20 md:py-32 bg-[#12100F] px-4 sm:px-6 lg:px-12 overflow-hidden">
         <div class="max-w-7xl mx-auto">
             <div class="grid lg:grid-cols-[0.88fr_1.35fr] gap-12 lg:gap-20 items-center">
                 <div class="text-white">
@@ -907,9 +945,9 @@
                         </div>
                     </div>
 
-                    <div class="mt-7 flex items-center justify-between gap-5">
-                        <div class="h-px flex-1 bg-gradient-to-r from-brandSand/30 via-white/10 to-transparent"></div>
-                        <div class="flex items-center gap-4">
+                    <div class="store-gallery-controls mt-7 flex items-center justify-between gap-5">
+                        <div class="store-gallery-rule h-px flex-1 bg-gradient-to-r from-brandSand/30 via-white/10 to-transparent"></div>
+                        <div class="store-gallery-nav flex items-center justify-center gap-4">
                             <button type="button" class="store-gallery-arrow w-9 h-9 rounded-full border border-white/20 text-white/45 hover:text-white hover:border-brandSand/70 hover:bg-white/5 flex items-center justify-center" aria-label="Foto anterior da loja" data-store-prev>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M15 19l-7-7 7-7"/></svg>
                             </button>
