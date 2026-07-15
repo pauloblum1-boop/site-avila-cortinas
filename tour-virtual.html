@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -57,6 +57,13 @@
         .tour-frame {
             animation: borderGlow 4s ease-in-out infinite;
         }
+        .tour-viewer {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+        }
 
         /* Partícula decorativa pulsante */
         @keyframes pulse-dot {
@@ -85,7 +92,50 @@
 
         /* Logo do header */
         #header-logo { height: 113px !important; width: auto !important; }
-        @media (max-width: 767px) { #header-logo { height: 88px !important; } }
+        @media (max-width: 767px) {
+            #header-logo { height: 88px !important; }
+            .tour-hero {
+                min-height: 42vh;
+            }
+            .tour-shell {
+                max-width: none;
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+            .tour-frame {
+                width: 100%;
+            }
+            .tour-frame-bar {
+                padding: 10px 12px;
+            }
+            .tour-frame-title {
+                max-width: 210px;
+                text-align: left;
+                font-size: 9px;
+                line-height: 1.45;
+                letter-spacing: 0.18em;
+            }
+            .tour-viewer {
+                height: calc(100svh - 152px);
+                min-height: 620px;
+                padding-bottom: 0;
+            }
+            .tour-frame-footer {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 8px;
+                padding: 10px 12px;
+            }
+            .tour-frame-footer p,
+            .tour-frame-footer a {
+                font-size: 8px;
+                line-height: 1.55;
+                letter-spacing: 0.17em;
+            }
+            .tour-info-section {
+                padding-top: 56px;
+            }
+        }
     </style>
 </head>
 
@@ -167,11 +217,12 @@
     <!-- ══════════════════════════════════
          HERO — Topo da página tour
     ══════════════════════════════════ -->
-    <section class="relative min-h-[52vh] flex items-end justify-center overflow-hidden bg-deepCharcoal">
+    <section class="tour-hero relative min-h-[52vh] flex items-end justify-center overflow-hidden bg-deepCharcoal">
         <!-- Fundo: imagem do showroom com overlay -->
         <img src="assets/img/cortina-02.jpg"
              alt="Showroom Ávila Cortinas e Persianas"
-             class="absolute inset-0 w-full h-full object-cover opacity-30">
+             class="absolute inset-0 w-full h-full object-cover opacity-30"
+             fetchpriority="high" decoding="async">
         <div class="absolute inset-0 bg-gradient-to-b from-deepCharcoal/60 via-deepCharcoal/30 to-deepCharcoal"></div>
 
         <!-- Ornamento central -->
@@ -200,20 +251,20 @@
          TOUR — Frame principal
     ══════════════════════════════════ -->
     <section class="bg-deepCharcoal pb-0">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="tour-shell max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
 
             <!-- Container do iframe com moldura elegante -->
             <div class="fade-up delay-4 relative tour-frame rounded-none overflow-hidden"
                  style="border: 1px solid rgba(232,216,169,0.18);">
 
                 <!-- Barra superior decorativa -->
-                <div class="flex items-center justify-between bg-[#141313] px-5 py-3 border-b border-brandSand/10">
+                <div class="tour-frame-bar flex items-center justify-between bg-[#141313] px-5 py-3 border-b border-brandSand/10">
                     <div class="flex items-center gap-2">
                         <span class="dot-pulse w-2.5 h-2.5 rounded-full bg-brandSand/60 inline-block" style="animation-delay:0s;"></span>
                         <span class="dot-pulse w-2.5 h-2.5 rounded-full bg-brandSand/40 inline-block" style="animation-delay:0.4s;"></span>
                         <span class="dot-pulse w-2.5 h-2.5 rounded-full bg-brandSand/20 inline-block" style="animation-delay:0.8s;"></span>
                     </div>
-                    <p class="text-[11px] uppercase tracking-[0.25em] text-brandSand/50 font-light select-none">
+                    <p class="tour-frame-title text-[11px] uppercase tracking-[0.25em] text-brandSand/50 font-light select-none">
                         Ávila Cortinas &amp; Persianas — Showroom Criciúma
                     </p>
                     <div class="flex items-center gap-1.5 text-brandSand/30">
@@ -226,7 +277,7 @@
                 </div>
 
                 <!-- O Tour -->
-                <div style="position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                <div class="tour-viewer">
                     <iframe
                         src="https://tours.clearpano.com/GtUX-OBK"
                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
@@ -238,7 +289,7 @@
                 </div>
 
                 <!-- Barra inferior decorativa -->
-                <div class="bg-[#141313] px-5 py-3 border-t border-brandSand/10 flex items-center justify-between">
+                <div class="tour-frame-footer bg-[#141313] px-5 py-3 border-t border-brandSand/10 flex items-center justify-between">
                     <p class="text-[10px] uppercase tracking-[0.2em] text-brandSand/30 font-light">
                         Arraste para navegar · Scroll para zoom · Clique nos pontos para explorar
                     </p>
@@ -257,7 +308,7 @@
     <!-- ══════════════════════════════════
          SEÇÃO INFO — Abaixo do tour
     ══════════════════════════════════ -->
-    <section class="bg-deepCharcoal py-20 px-6 lg:px-12">
+    <section class="tour-info-section bg-deepCharcoal py-20 px-6 lg:px-12">
         <div class="max-w-7xl mx-auto">
 
             <!-- Divisor ornamental -->
@@ -332,7 +383,7 @@
             <!-- Col 1 — Logo + Descrição -->
             <div class="flex flex-col gap-5 items-center md:items-start text-center md:text-left">
                 <a href="index.html#hero" class="inline-block">
-                    <img src="assets/img/logo.png" alt="Ávila Cortinas e Persianas" class="w-32 md:w-40 h-auto object-contain drop-shadow-sm lux-transition">
+                    <img src="assets/img/logo.png" alt="Ávila Cortinas e Persianas" class="w-32 md:w-40 h-auto object-contain drop-shadow-sm lux-transition" loading="lazy" decoding="async">
                 </a>
                 <p class="font-light text-sm opacity-60 leading-relaxed">Curadoria e sofisticação em cortinas, persianas e soluções decorativas para quem valoriza a excelência do design de interiores.</p>
             </div>
@@ -368,7 +419,7 @@
 
     <!-- WhatsApp float -->
     <a href="https://wa.me/554834374494?text=Ol%C3%A1%2C%20vim%20do%20Google%20pelo%20site%20da%20%C3%81vila%20Cortinas%20e%20Persianas%20e%20gostaria%20de%20fazer%20um%20or%C3%A7amento." target="_blank"
-       class="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 w-14 h-14 bg-white/10 backdrop-blur-sm text-white rounded-full flex items-center justify-center shadow-2xl hover:bg-brandSand hover:text-deepCharcoal hover:scale-110 lux-transition z-50 border border-white/10 group whatsapp-cta" data-source="google-site" data-channel="whatsapp" data-business="avila-cortinas" data-action="orcamento">
+       class="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 w-14 h-14 bg-white/10 backdrop-blur-sm text-white rounded-full hidden md:flex items-center justify-center shadow-2xl hover:bg-brandSand hover:text-deepCharcoal hover:scale-110 lux-transition z-50 border border-white/10 group whatsapp-cta" data-source="google-site" data-channel="whatsapp" data-business="avila-cortinas" data-action="orcamento">
         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
         </svg>

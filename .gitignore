@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.static-server-*.log
+
+# Build and tool caches
+.cache/
+.parcel-cache/
+.vite/
+.turbo/
+coverage/
+.nyc_output/
+
+# Deployment provider local state
+.vercel/
+.netlify/
+
+# Local backups and temporary captures
+_backups/
+_encoding-check*.png
+*.tmp
+*.temp
+
+# Local source/build workspace not served by Hostinger
+/dist/
+/IMG/
+/src/
+/scripts/
+/template-exemplo/
+/guia-de-imagens.md
+/lll.jpeg
+/pvclicado.png
+/verde.JPEG
+/package.json
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
