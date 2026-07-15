@@ -4,6 +4,9 @@
 
 Options -Indexes
 
+# Tipos modernos de imagem
+AddType image/webp .webp
+
 # ------------------------------------------------------------
 # 1) Dominio canonico e HTTPS (301)
 #    Destino oficial: https://www.cortinasavila.com.br
